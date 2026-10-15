@@ -1,0 +1,13 @@
+{
+  "name": "llm-router",
+  "version": "1.0.0",
+  "description": "Unified Resilient Multi-Provider LLM Gateway",
+  "scripts": {
+    "dev": "python run.py",
+    "dev:all": "python run.py",
+    "start": "python run.py",
+    "test": "python tests/test_e2e.py",
+    "test:matrix": "python tests/test_matrix.py",
+    "test:sim": "python tests/test_browser_sim.py"
+  }
+}

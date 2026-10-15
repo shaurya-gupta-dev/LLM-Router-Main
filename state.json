@@ -1,0 +1,1067 @@
+{
+  "disabled_models": {
+    "gemini:gemini-3.8-flash": false,
+    "gemini:gemini-3.7-flash": false,
+    "gemini:gemini-3.5-flash": false,
+    "gemini:gemini-3.5-flash-lite": false,
+    "gemini:gemini-3.1-flash-lite": false,
+    "gemini:gemma-4-31b-it": false,
+    "gemini:gemini-flash-latest": false,
+    "gemini:gemini-pro-latest": false,
+    "groq:openai/gpt-oss-120b": false,
+    "groq:qwen/qwen3.8-27b": false,
+    "groq:openai/gpt-oss-20b": false,
+    "groq:llama-3.3-70b-versatile": false,
+    "groq:llama-4-scout-17b-16e-instruct": false,
+    "github:openai/gpt-5": false,
+    "github:gpt-4o": false,
+    "github:gpt-4o-mini": false,
+    "github:meta-llama-3.3-70b-instruct": false,
+    "github:DeepSeek-V3": false,
+    "cerebras:gpt-oss-120b": false,
+    "cerebras:qwen-3.8-27b": false,
+    "mistral:codestral-latest": false,
+    "mistral:mistral-small-latest": false,
+    "mistral:mistral-code-latest": false,
+    "openrouter:deepseek/deepseek-v3.1:free": false,
+    "openrouter:qwen/qwen3-coder:free": false,
+    "openrouter:moonshotai/kimi-k2:free": false,
+    "openrouter:z-ai/glm-4.5-air:free": false,
+    "openrouter:qwen/qwen3.8-27b:free": false,
+    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": false,
+    "openrouter:nvidia/nemotron-3.5-lightning:free": false,
+    "openrouter:google/gemma-4-31b-it:free": false,
+    "nvidia:deepseek-ai/deepseek-v4.1-flash": false,
+    "nvidia:meta/llama-3.3-70b-instruct": false,
+    "nvidia:google/gemma-3-12b-it": false,
+    "huggingface:Qwen/Qwen2.5-Coder-32B-Instruct": false,
+    "huggingface:meta-llama/Llama-3.3-70B-Instruct": false,
+    "sambanova:gpt-oss-120b": false,
+    "sambanova:Meta-Llama-3.3-70B-Instruct": false,
+    "sambanova:DeepSeek-V3.1": false,
+    "together:meta-llama/Llama-3.3-70B-Instruct-Turbo": false,
+    "together:Qwen/Qwen2.5-Coder-32B-Instruct": false,
+    "deepseek:deepseek-chat": false,
+    "deepseek:deepseek-reasoner": false,
+    "cohere:command-r-plus-08-2024": false,
+    "cohere:command-r-08-2024": false,
+    "cohere:command-a-plus": false,
+    "cohere:north-mini-code": false,
+    "antigravity:gemini-3.8-flash": false,
+    "antigravity:gemini-2.5-pro": false,
+    "antigravity:gemini-3.5-flash-lite": false,
+    "antigravity:gemma-4-31b-it": false,
+    "pollinations:openai": false,
+    "pollinations:qwen": false,
+    "pollinations:mistral": false,
+    "modelscope:Qwen/Qwen2.5-72B-Instruct": false,
+    "modelscope:Qwen/Qwen2.5-Coder-32B-Instruct": false,
+    "modelscope:MiniMax-M3": false,
+    "modelscope:glm-5.2": false,
+    "aihorde:llama-3-70b": false,
+    "cloudflare:@cf/meta/llama-3.3-70b-instruct": false,
+    "cloudflare:@cf/deepseek-ai/deepseek-r1-distill-qwen-32b": false,
+    "cloudflare:@cf/qwen/qwen2.5-coder-32b-instruct": false,
+    "radeon:deepseek-ai/deepseek-v4": false,
+    "radeon:qwen/qwen-3.8-27b": false,
+    "radeon:google/gemma-4-31b-it": false,
+    "llm7:gpt-4o-mini": false,
+    "llm7:claude-haiku-5-5": false,
+    "llm7:claude-sonnet-4-6": false,
+    "llm7:claude-sonnet-5": false,
+    "llm7:gemini-3.8-flash-high": false,
+    "llm7:deepseek-chat": false,
+    "llm7:codestral-latest": false,
+    "kilo:kilo-auto/free": false,
+    "kilo:deepseek/deepseek-r1:free": false,
+    "kilo:qwen/qwen-2.5-coder-32b:free": false,
+    "zhipu:glm-4-flash": false,
+    "zhipu:glm-4.7-flash": false,
+    "zhipu:glm-5.2": false,
+    "zhipu:glm-5.3": false,
+    "zhipu:glm-4v-flash": false,
+    "electronhub:gpt-4o-mini": false,
+    "electronhub:gpt-5.4-mini": false,
+    "electronhub:o4-mini": false,
+    "electronhub:claude-3-5-haiku": false,
+    "septor:claude-3.5-sonnet": false,
+    "septor:claude-fable-5.1": false,
+    "septor:gpt-6-astra": false,
+    "septor:muse-spark": false,
+    "septor:deepseek-r1": false,
+    "septor:glm-5.3": false,
+    "router9:deepseek-v4-pro": false,
+    "router9:claude-3-5-sonnet": false,
+    "router9:claude-opus": false,
+    "requesty:nvidia/nemotron-3.5-lightning": false,
+    "requesty:google/gemma-2-9b": false,
+    "routeway:meta-llama/llama-3.3-70b-instruct:free": false,
+    "routeway:deepseek/deepseek-r1:free": false,
+    "unorouter:glm-4-flash:free": false,
+    "unorouter:glm-5.3": false,
+    "unorouter:deepseek-r1:free": false,
+    "bazaarlink:auto:free": false,
+    "bazaarlink:deepseek-chat": false,
+    "bazaarlink:deepseek-v3": false,
+    "bazaarlink:qwen-2.5-72b": false,
+    "ovh:qwen-3.5-397b": false,
+    "ovh:gpt-oss-120b": false,
+    "ollama:nemotron-3-ultra": false,
+    "ollama:gpt-oss-120b": false,
+    "agnes:agnes-3.0-flash": false,
+    "agnes:agnes-2.5-flash": false,
+    "aion:aion-3.0": false,
+    "aion:aion-2.0": false,
+    "nara:laguna-s-2.1": false,
+    "nara:deepseek-r1": false,
+    "sail:glm-4-plus": false,
+    "sail:glm-5.3": false,
+    "sail:gpt-oss-120b": false,
+    "sealion:sea-lion-v4-32b": false,
+    "sealion:sea-lion-v4.5-27b": false,
+    "sealion:qwen-sea-lion-v4-32b": false,
+    "sealion:qwen-sea-lion-v4.5-27b": false,
+    "xkiro:mistral-medium-3.5:free": false,
+    "xkiro:minimax-m3:free": false,
+    "airforce:chatgpt-4o-latest": false,
+    "airforce:llama-3.3-70b": false,
+    "airforce:qwen-2.5-72b": false,
+    "lucidity:synth-2.5-preview": false,
+    "lucidity:meta-llama/llama-3.3-70b-instruct:free": false,
+    "apinex:free/deepseek-v4-pro-0813": false,
+    "apinex:free/qwen-3.8-max": false,
+    "apinex:free/deepseek-v4.1-flash": false,
+    "apinex:free/deepseek-v4-flash-0731": false,
+    "apinex:free/gemini-3.8-flash": false,
+    "apinex:free/gpt-6-luna": false,
+    "apinex:free/glm-5.3-flash": false,
+    "apinex:free/mimo-v2.6-pro": false
+  },
+  "active_strategy": "direct",
+  "custom_priority": [
+    [
+      "cerebras",
+      "gpt-oss-120b"
+    ],
+    [
+      "gemini",
+      "gemini-3.8-flash"
+    ],
+    [
+      "groq",
+      "openai/gpt-oss-120b"
+    ]
+  ],
+  "presets": {
+    "max_speed": {
+      "name": "Max Speed",
+      "description": "Prioritizes fastest inference providers (Cerebras ~2000 tok/s, Groq ~300 tok/s, SambaNova)",
+      "priority": [
+        [
+          "cerebras",
+          "gpt-oss-120b"
+        ],
+        [
+          "cerebras",
+          "qwen-3.8-27b"
+        ],
+        [
+          "groq",
+          "openai/gpt-oss-120b"
+        ],
+        [
+          "groq",
+          "openai/gpt-oss-20b"
+        ],
+        [
+          "sambanova",
+          "gpt-oss-120b"
+        ],
+        [
+          "gemini",
+          "gemini-3.8-flash"
+        ],
+        [
+          "mistral",
+          "codestral-latest"
+        ]
+      ]
+    },
+    "best_quality": {
+      "name": "Best Quality",
+      "description": "Prioritizes highest capability reasoning and coding models",
+      "priority": [
+        [
+          "gemini",
+          "gemini-3.8-flash"
+        ],
+        [
+          "mistral",
+          "codestral-latest"
+        ],
+        [
+          "cerebras",
+          "gpt-oss-120b"
+        ],
+        [
+          "groq",
+          "openai/gpt-oss-120b"
+        ],
+        [
+          "cohere",
+          "command-r-plus-08-2024"
+        ],
+        [
+          "nvidia",
+          "deepseek-ai/deepseek-v4.1-flash"
+        ],
+        [
+          "openrouter",
+          "nvidia/nemotron-3-super-120b-a12b:free"
+        ]
+      ]
+    },
+    "max_quota": {
+      "name": "Max Quota (Survival)",
+      "description": "Distributes load across providers with the largest free daily quotas to maximize total usage",
+      "priority": [
+        [
+          "groq",
+          "openai/gpt-oss-20b"
+        ],
+        [
+          "groq",
+          "qwen/qwen3.8-27b"
+        ],
+        [
+          "cerebras",
+          "qwen-3.8-27b"
+        ],
+        [
+          "cerebras",
+          "gpt-oss-120b"
+        ],
+        [
+          "gemini",
+          "gemma-4-31b-it"
+        ],
+        [
+          "gemini",
+          "gemini-3.8-flash"
+        ],
+        [
+          "gemini",
+          "gemini-3.5-flash-lite"
+        ],
+        [
+          "gemini",
+          "gemini-3.1-flash-lite"
+        ],
+        [
+          "sambanova",
+          "gpt-oss-120b"
+        ],
+        [
+          "cohere",
+          "command-r-08-2024"
+        ],
+        [
+          "mistral",
+          "mistral-small-latest"
+        ]
+      ]
+    },
+    "direct": {
+      "name": "Direct / No Strategy",
+      "description": "Bypasses heuristic tiering \u2014 routes directly to the requested model's fallback chain as configured in config.yaml",
+      "priority": []
+    }
+  },
+  "model_health_cache": {
+    "gemini:gemini-3.5-flash-lite": {
+      "status": "healthy",
+      "latency_ms": 1792.8,
+      "last_checked": 1792043984.2746491
+    },
+    "gemini:gemini-3.8-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043987.1425762,
+      "error": "Google Gemini error (503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Ple"
+    },
+    "gemini:gemini-3.5-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043987.147897,
+      "error": "Google Gemini error (503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Ple"
+    },
+    "gemini:gemini-pro-latest": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792043987.761915,
+      "error": "Google Gemini rate limit: You exceeded your current quota, please check your plan and billing details. For more informat"
+    },
+    "groq:openai/gpt-oss-120b": {
+      "status": "healthy",
+      "latency_ms": 389.1,
+      "last_checked": 1792043988.1511092
+    },
+    "groq:qwen/qwen3.8-27b": {
+      "status": "healthy",
+      "latency_ms": 115.0,
+      "last_checked": 1792043988.2661495
+    },
+    "groq:openai/gpt-oss-20b": {
+      "status": "healthy",
+      "latency_ms": 508.1,
+      "last_checked": 1792043988.774284
+    },
+    "groq:llama-3.3-70b-versatile": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043988.8308566,
+      "error": "Provider 'groq' returned 404: The model `llama-3.3-70b-versatile` does not exist or you do not have access to it."
+    },
+    "groq:llama-4-scout-17b-16e-instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043988.888705,
+      "error": "Provider 'groq' returned 404: The model `llama-4-scout-17b-16e-instruct` does not exist or you do not have access to it."
+    },
+    "github:openai/gpt-5": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043989.7632582,
+      "error": "Provider 'github' returned invalid non-JSON body: OK\r\n"
+    },
+    "github:gpt-4o": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043990.0179179,
+      "error": "Provider 'github' returned invalid non-JSON body: OK\r\n"
+    },
+    "gemini:gemini-3.7-flash": {
+      "status": "healthy",
+      "latency_ms": 7770.7,
+      "last_checked": 1792043990.247206
+    },
+    "gemini:gemini-flash-latest": {
+      "status": "healthy",
+      "latency_ms": 3108.1,
+      "last_checked": 1792043990.2512085
+    },
+    "github:gpt-4o-mini": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043990.263338,
+      "error": "Provider 'github' returned invalid non-JSON body: OK\r\n"
+    },
+    "github:meta-llama-3.3-70b-instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043990.5189517,
+      "error": "Provider 'github' returned invalid non-JSON body: OK\r\n"
+    },
+    "github:DeepSeek-V3": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043990.527063,
+      "error": "Provider 'github' returned invalid non-JSON body: OK\r\n"
+    },
+    "cerebras:gpt-oss-120b": {
+      "status": "healthy",
+      "latency_ms": 467.6,
+      "last_checked": 1792043990.7310553
+    },
+    "cerebras:qwen-3.8-27b": {
+      "status": "healthy",
+      "latency_ms": 415.3,
+      "last_checked": 1792043990.9346163
+    },
+    "mistral:mistral-small-latest": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792043990.955311,
+      "error": "Rate limit exceeded on provider 'mistral': {'object': 'error', 'message': 'Rate limit exceeded', 'type': 'rate_limited',"
+    },
+    "mistral:codestral-latest": {
+      "status": "healthy",
+      "latency_ms": 452.9,
+      "last_checked": 1792043990.980207
+    },
+    "mistral:mistral-code-latest": {
+      "status": "healthy",
+      "latency_ms": 401.4,
+      "last_checked": 1792043991.3360653
+    },
+    "openrouter:qwen/qwen3-coder:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043991.4749906,
+      "error": "Provider 'openrouter' returned 404: This model is unavailable for free. The paid version is available now - use this slu"
+    },
+    "openrouter:deepseek/deepseek-v3.1:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043991.478243,
+      "error": "Provider 'openrouter' returned 400: deepseek/deepseek-v3.1:free is not a valid model ID"
+    },
+    "openrouter:z-ai/glm-4.5-air:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043991.5038972,
+      "error": "Provider 'openrouter' returned 404: This model is unavailable for free. The paid version is available now - use this slu"
+    },
+    "openrouter:qwen/qwen3.8-27b:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043991.506746,
+      "error": "Provider 'openrouter' returned 404: This model is unavailable for free. The paid version is available now - use this slu"
+    },
+    "openrouter:moonshotai/kimi-k2:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043991.6576824,
+      "error": "Provider 'openrouter' returned 404: This model is unavailable for free. The paid version is available now - use this slu"
+    },
+    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
+      "status": "healthy",
+      "latency_ms": 462.6,
+      "last_checked": 1792043991.9666862
+    },
+    "openrouter:nvidia/nemotron-3.5-lightning:free": {
+      "status": "healthy",
+      "latency_ms": 511.1,
+      "last_checked": 1792043992.017921
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792043992.0397613,
+      "error": "Rate limit exceeded on provider 'openrouter': Provider returned error"
+    },
+    "nvidia:meta/llama-3.3-70b-instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043992.3395998,
+      "error": "Provider 'nvidia' returned 410: {'type': 'about:blank', 'title': 'Gone', 'status': 410, 'detail': \"The model 'meta/llama"
+    },
+    "nvidia:google/gemma-3-12b-it": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043992.3420956,
+      "error": "Provider 'nvidia' returned 404: {'status': 404, 'title': 'Not Found', 'detail': \"Function 'ee47df99-c92b-4dc9-b3a7-f3fb0"
+    },
+    "huggingface:meta-llama/Llama-3.3-70B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043992.8618653,
+      "error": "Provider 'huggingface' returned 400: {\"error\":\"Model not supported by provider hf-inference\"}"
+    },
+    "huggingface:Qwen/Qwen2.5-Coder-32B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043992.8670363,
+      "error": "Provider 'huggingface' returned 400: {\"error\":\"Model not supported by provider hf-inference\"}"
+    },
+    "sambanova:gpt-oss-120b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043993.9987855,
+      "error": "Provider 'sambanova' returned 402: A payment method is required. Add one at https://cloud.sambanova.ai/plans/billing to "
+    },
+    "sambanova:Meta-Llama-3.3-70B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043994.4211855,
+      "error": "Provider 'sambanova' returned 402: A payment method is required. Add one at https://cloud.sambanova.ai/plans/billing to "
+    },
+    "sambanova:DeepSeek-V3.1": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043994.519468,
+      "error": "Provider 'sambanova' returned 402: A payment method is required. Add one at https://cloud.sambanova.ai/plans/billing to "
+    },
+    "together:meta-llama/Llama-3.3-70B-Instruct-Turbo": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043994.726757,
+      "error": "Authentication failed on provider 'together': Invalid API key provided. You can find your API key at https://api.togethe"
+    },
+    "together:Qwen/Qwen2.5-Coder-32B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043995.1737049,
+      "error": "Authentication failed on provider 'together': Invalid API key provided. You can find your API key at https://api.togethe"
+    },
+    "deepseek:deepseek-reasoner": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043995.870107,
+      "error": "Provider 'deepseek' returned 402: Insufficient Balance (request_id: 979950bd-4c3c-47cf-9d3b-33f402ab5d0b)"
+    },
+    "deepseek:deepseek-chat": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043995.8910298,
+      "error": "Provider 'deepseek' returned 402: Insufficient Balance (request_id: cb4a7bea-217d-40f1-8b37-33ee6219eaaf)"
+    },
+    "cohere:command-r-08-2024": {
+      "status": "healthy",
+      "latency_ms": 500.4,
+      "last_checked": 1792043996.3914392
+    },
+    "cohere:command-r-plus-08-2024": {
+      "status": "healthy",
+      "latency_ms": 558.4,
+      "last_checked": 1792043996.4285445
+    },
+    "cohere:command-a-plus": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043996.7011616,
+      "error": "Provider 'cohere' returned 404: {'id': '7fa78353-11b7-409c-b568-f20c0a537efb', 'message': \"model 'command-a-plus' not fo"
+    },
+    "cohere:north-mini-code": {
+      "status": "healthy",
+      "latency_ms": 420.8,
+      "last_checked": 1792043996.8496518
+    },
+    "gemini:gemini-3.1-flash-lite": {
+      "status": "healthy",
+      "latency_ms": 14428.9,
+      "last_checked": 1792043996.9130647
+    },
+    "antigravity:gemini-2.5-pro": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043997.467902,
+      "error": "Google Gemini error (404): This model models/gemini-2.5-pro is no longer available to new users. Please update your code"
+    },
+    "antigravity:gemini-3.8-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043997.7794266,
+      "error": "Google Gemini error (503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Ple"
+    },
+    "pollinations:openai": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043998.1865902,
+      "error": "Provider 'pollinations' returned 404: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title"
+    },
+    "antigravity:gemini-3.5-flash-lite": {
+      "status": "healthy",
+      "latency_ms": 1354.4,
+      "last_checked": 1792043998.2677357
+    },
+    "pollinations:qwen": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043998.5386639,
+      "error": "Provider 'pollinations' returned 404: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title"
+    },
+    "pollinations:mistral": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792043998.6336687,
+      "error": "Provider 'pollinations' returned 404: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title"
+    },
+    "gemini:gemma-4-31b-it": {
+      "status": "timeout",
+      "latency_ms": null,
+      "last_checked": 1792043999.2858095
+    },
+    "modelscope:Qwen/Qwen2.5-72B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044000.1180427,
+      "error": "Authentication failed on provider 'modelscope': Please bind your Alibaba Cloud account before use."
+    },
+    "modelscope:glm-5.2": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044000.446837,
+      "error": "Provider 'modelscope' returned 400: Invalid model id: glm-5.2"
+    },
+    "modelscope:MiniMax-M3": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.0793772,
+      "error": "Provider 'modelscope' returned 400: Invalid model id: MiniMax-M3"
+    },
+    "modelscope:Qwen/Qwen2.5-Coder-32B-Instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.0924833,
+      "error": "Authentication failed on provider 'modelscope': Please bind your Alibaba Cloud account before use."
+    },
+    "aihorde:llama-3-70b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.238368,
+      "error": "Provider 'aihorde' returned 406: {'detail': 'Model None not known!'}"
+    },
+    "cloudflare:@cf/meta/llama-3.3-70b-instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.288314,
+      "error": "Provider 'cloudflare' returned 404: {'result': None, 'success': False, 'errors': [{'code': 7003, 'message': 'Could not r"
+    },
+    "radeon:deepseek-ai/deepseek-v4": {
+      "status": "no_key",
+      "latency_ms": null,
+      "last_checked": 1792044001.2884111
+    },
+    "radeon:qwen/qwen-3.8-27b": {
+      "status": "no_key",
+      "latency_ms": null,
+      "last_checked": 1792044001.2887108
+    },
+    "radeon:google/gemma-4-31b-it": {
+      "status": "no_key",
+      "latency_ms": null,
+      "last_checked": 1792044001.2887988
+    },
+    "cloudflare:@cf/deepseek-ai/deepseek-r1-distill-qwen-32b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.2941523,
+      "error": "Provider 'cloudflare' returned 404: {'result': None, 'success': False, 'errors': [{'code': 7003, 'message': 'Could not r"
+    },
+    "cloudflare:@cf/qwen/qwen2.5-coder-32b-instruct": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044001.2981575,
+      "error": "Provider 'cloudflare' returned 404: {'result': None, 'success': False, 'errors': [{'code': 7003, 'message': 'Could not r"
+    },
+    "llm7:gpt-4o-mini": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044002.3931432,
+      "error": "Provider 'llm7' returned 400: Model 'gpt-4o-mini' is currently unavailable."
+    },
+    "llm7:claude-haiku-5-5": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044002.671296,
+      "error": "Provider 'llm7' returned 402: Insufficient balance. Please top up your balance to continue."
+    },
+    "llm7:claude-sonnet-4-6": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044002.6774032,
+      "error": "Provider 'llm7' returned 402: Insufficient balance. Please top up your balance to continue."
+    },
+    "llm7:claude-sonnet-5": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.1358714,
+      "error": "Provider 'llm7' returned 402: Insufficient balance. Please top up your balance to continue."
+    },
+    "llm7:gemini-3.8-flash-high": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.1396391,
+      "error": "Provider 'llm7' returned 402: Insufficient balance. Please top up your balance to continue."
+    },
+    "llm7:deepseek-chat": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.2034366,
+      "error": "Provider 'llm7' returned 400: Model 'deepseek-chat' is currently unavailable."
+    },
+    "kilo:kilo-auto/free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.4316275,
+      "error": "Provider 'kilo' returned 404: <!DOCTYPE html><html data-dpl-id=\"dpl_3jXUVEu6ape2iSJX4vwMVwS5sGa5\" lang=\"en\" class=\"inter"
+    },
+    "kilo:deepseek/deepseek-r1:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.440033,
+      "error": "Provider 'kilo' returned 404: <!DOCTYPE html><html data-dpl-id=\"dpl_3jXUVEu6ape2iSJX4vwMVwS5sGa5\" lang=\"en\" class=\"inter"
+    },
+    "kilo:qwen/qwen-2.5-coder-32b:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044003.4910407,
+      "error": "Provider 'kilo' returned 404: <!DOCTYPE html><html data-dpl-id=\"dpl_3jXUVEu6ape2iSJX4vwMVwS5sGa5\" lang=\"en\" class=\"inter"
+    },
+    "zhipu:glm-4-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044004.557838,
+      "error": "Provider 'zhipu' returned 400: \u6a21\u578b\u4e0d\u5b58\u5728\uff0c\u8bf7\u68c0\u67e5\u6a21\u578b\u4ee3\u7801\u3002"
+    },
+    "zhipu:glm-4.7-flash": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044004.7348642,
+      "error": "Rate limit exceeded on provider 'zhipu': \u8be5\u6a21\u578b\u5f53\u524d\u8bbf\u95ee\u91cf\u8fc7\u5927\uff0c\u8bf7\u60a8\u7a0d\u540e\u518d\u8bd5"
+    },
+    "zhipu:glm-5.2": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044004.7931736,
+      "error": "Rate limit exceeded on provider 'zhipu': \u4f59\u989d\u4e0d\u8db3\u6216\u65e0\u53ef\u7528\u8d44\u6e90\u5305,\u8bf7\u5145\u503c\u3002"
+    },
+    "zhipu:glm-5.3": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044004.9959319,
+      "error": "Rate limit exceeded on provider 'zhipu': \u4f59\u989d\u4e0d\u8db3\u6216\u65e0\u53ef\u7528\u8d44\u6e90\u5305,\u8bf7\u5145\u503c\u3002"
+    },
+    "zhipu:glm-4v-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044005.067284,
+      "error": "Provider 'zhipu' returned 400: \u6a21\u578b\u4e0d\u5b58\u5728\uff0c\u8bf7\u68c0\u67e5\u6a21\u578b\u4ee3\u7801\u3002"
+    },
+    "nvidia:deepseek-ai/deepseek-v4.1-flash": {
+      "status": "timeout",
+      "latency_ms": null,
+      "last_checked": 1792044006.9844818
+    },
+    "electronhub:gpt-4o-mini": {
+      "status": "healthy",
+      "latency_ms": 2285.5,
+      "last_checked": 1792044007.2815154
+    },
+    "electronhub:o4-mini": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044007.690743,
+      "error": "Provider 'electronhub' returned 500: The upstream request failed (openai). Please try again."
+    },
+    "electronhub:gpt-5.4-mini": {
+      "status": "healthy",
+      "latency_ms": 2703.3,
+      "last_checked": 1792044007.7706547
+    },
+    "electronhub:claude-3-5-haiku": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044007.8459272,
+      "error": "Provider 'electronhub' returned 400: Invalid model."
+    },
+    "llm7:codestral-latest": {
+      "status": "healthy",
+      "latency_ms": 4894.5,
+      "last_checked": 1792044008.030423
+    },
+    "septor:claude-fable-5.1": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044008.9196584,
+      "error": "Provider 'septor' returned 402: Only available to PAID users."
+    },
+    "septor:claude-3.5-sonnet": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044008.923986,
+      "error": "Provider 'septor' returned 503: No providers available for model: claude-3.5-sonnet"
+    },
+    "septor:deepseek-r1": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044010.1214375,
+      "error": "Rate limit exceeded on provider 'septor': free tier queue is saturated; please retry shortly"
+    },
+    "septor:muse-spark": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044010.21523,
+      "error": "Provider 'septor' returned 503: No providers available for model: muse-spark"
+    },
+    "septor:gpt-6-astra": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044010.2171364,
+      "error": "Provider 'septor' returned 402: Only available to PAID users."
+    },
+    "septor:glm-5.3": {
+      "status": "healthy",
+      "latency_ms": 1975.6,
+      "last_checked": 1792044010.8997574
+    },
+    "requesty:nvidia/nemotron-3.5-lightning": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044011.9265025,
+      "error": "Provider 'requesty' returned 404: The requested model was not found. Check the model ID against https://app.requesty.ai/"
+    },
+    "router9:claude-3-5-sonnet": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044012.1775224,
+      "error": "Provider 'router9' returned 404: Model not found: claude-3-5-sonnet"
+    },
+    "router9:claude-opus": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044012.178278,
+      "error": "Provider 'router9' returned 404: Model not found: claude-opus"
+    },
+    "requesty:google/gemma-2-9b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044012.3469822,
+      "error": "Provider 'requesty' returned 404: The requested model was not found. Check the model ID against https://app.requesty.ai/"
+    },
+    "antigravity:gemma-4-31b-it": {
+      "status": "timeout",
+      "latency_ms": null,
+      "last_checked": 1792044012.4812875
+    },
+    "router9:deepseek-v4-pro": {
+      "status": "healthy",
+      "latency_ms": 2435.7,
+      "last_checked": 1792044012.5572765
+    },
+    "routeway:deepseek/deepseek-r1:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044013.3562143,
+      "error": "Provider 'routeway' returned 400: No model found: deepseek/deepseek-r1:free"
+    },
+    "routeway:meta-llama/llama-3.3-70b-instruct:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044013.363747,
+      "error": "Provider 'routeway' returned 400: No model found: meta-llama/llama-3.3-70b-instruct:free"
+    },
+    "unorouter:glm-4-flash:free": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044013.466795,
+      "error": "Provider 'unorouter' returned 503: All providers for model \"glm-4-flash:free\" are busy right now (they hit their rate li"
+    },
+    "unorouter:deepseek-r1:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044013.4866474,
+      "error": "Provider 'unorouter' returned 404: Model \"deepseek-r1:free\" is not offered here. Check the model name for typos, or swit"
+    },
+    "unorouter:glm-5.3": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044013.4920075,
+      "error": "Authentication failed on provider 'unorouter': Your balance is empty (remaining: \uff040.000000), so this paid model cannot r"
+    },
+    "bazaarlink:deepseek-v3": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044014.421391,
+      "error": "Provider 'bazaarlink' returned 404: model 'deepseek-v3' is not available"
+    },
+    "bazaarlink:qwen-2.5-72b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044014.4285178,
+      "error": "Provider 'bazaarlink' returned 402: Insufficient credits. Please top up to continue."
+    },
+    "bazaarlink:deepseek-chat": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044014.7291477,
+      "error": "Provider 'bazaarlink' returned 402: Insufficient credits. Please top up to continue."
+    },
+    "ollama:nemotron-3-ultra": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044015.011041,
+      "error": "Provider 'ollama' returned 404: {\"error\":\"path \\\"/api/chat/completions\\\" not found\"}\n"
+    },
+    "agnes:agnes-3.0-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044015.373866,
+      "error": "Provider 'agnes' returned 404: {'code': '000201', 'message': 'Resource not found', 'data': {}}"
+    },
+    "agnes:agnes-2.5-flash": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044015.4996808,
+      "error": "Provider 'agnes' returned 404: {'code': '000201', 'message': 'Resource not found', 'data': {}}"
+    },
+    "ollama:gpt-oss-120b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044016.0321147,
+      "error": "Provider 'ollama' returned 404: {\"error\":\"path \\\"/api/chat/completions\\\" not found\"}\n"
+    },
+    "aion:aion-3.0": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044016.2132597,
+      "error": "Provider 'aion' returned 400: Unknown model: aion-3.0"
+    },
+    "aion:aion-2.0": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044016.3875725,
+      "error": "Provider 'aion' returned 400: Unknown model: aion-2.0"
+    },
+    "bazaarlink:auto:free": {
+      "status": "healthy",
+      "latency_ms": 3522.2,
+      "last_checked": 1792044016.8791091
+    },
+    "ovh:gpt-oss-120b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044017.4848523,
+      "error": "Provider 'ovh' returned invalid non-JSON body: <!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"v"
+    },
+    "ovh:qwen-3.5-397b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044017.4900358,
+      "error": "Provider 'ovh' returned invalid non-JSON body: <!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"v"
+    },
+    "sail:glm-4-plus": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044018.2478397,
+      "error": "Provider 'sail' returned 402: Your API key has been disabled due to insufficient credits. Visit https://app.sailresearch"
+    },
+    "sail:glm-5.3": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044018.258597,
+      "error": "Provider 'sail' returned 402: Your API key has been disabled due to insufficient credits. Visit https://app.sailresearch"
+    },
+    "sail:gpt-oss-120b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044018.2647414,
+      "error": "Provider 'sail' returned 402: Your API key has been disabled due to insufficient credits. Visit https://app.sailresearch"
+    },
+    "sealion:sea-lion-v4-32b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.4206007,
+      "error": "Authentication failed on provider 'sealion': key not allowed to access model. This key can only access models=['standard"
+    },
+    "sealion:qwen-sea-lion-v4-32b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.423018,
+      "error": "Authentication failed on provider 'sealion': key not allowed to access model. This key can only access models=['standard"
+    },
+    "sealion:sea-lion-v4.5-27b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.433293,
+      "error": "Authentication failed on provider 'sealion': key not allowed to access model. This key can only access models=['standard"
+    },
+    "sealion:qwen-sea-lion-v4.5-27b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.6832345,
+      "error": "Authentication failed on provider 'sealion': key not allowed to access model. This key can only access models=['standard"
+    },
+    "nara:deepseek-r1": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.8019776,
+      "error": "Authentication failed on provider 'nara': telegram_required: Join the required Telegram group/channel and relink at /set"
+    },
+    "nara:laguna-s-2.1": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044019.9685376,
+      "error": "Authentication failed on provider 'nara': telegram_required: Join the required Telegram group/channel and relink at /set"
+    },
+    "xkiro:mistral-medium-3.5:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044020.6582203,
+      "error": "Provider 'xkiro' returned 404: Model \"mistral-medium-3.5:free\" does not exist."
+    },
+    "xkiro:minimax-m3:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044020.668187,
+      "error": "Provider 'xkiro' returned 404: Model \"minimax-m3:free\" does not exist."
+    },
+    "lucidity:synth-2.5-preview": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044021.6826432,
+      "error": "Provider 'lucidity' returned 404: Model synth-2.5-preview was not found. Check the model ID or use /v1/models."
+    },
+    "lucidity:meta-llama/llama-3.3-70b-instruct:free": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044021.7661989,
+      "error": "Provider 'lucidity' returned 404: Free model variants were retired unless explicitly enabled by an admin, so meta-llama/"
+    },
+    "airforce:llama-3.3-70b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044022.7210407,
+      "error": "Provider 'airforce' returned 402: Model 'llama-3.3-70b' requires an active subscription or a positive Pay-As-You-Go bala"
+    },
+    "airforce:qwen-2.5-72b": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044022.7264016,
+      "error": "Provider 'airforce' returned 404: The model 'qwen-2.5-72b' does not exist or you do not have access to it. See https://a"
+    },
+    "airforce:chatgpt-4o-latest": {
+      "status": "error",
+      "latency_ms": null,
+      "last_checked": 1792044022.7309024,
+      "error": "Provider 'airforce' returned 402: Model 'chatgpt-4o-latest' requires an active subscription or a positive Pay-As-You-Go "
+    },
+    "apinex:free/deepseek-v4-pro-0813": {
+      "status": "healthy",
+      "latency_ms": 3233.2,
+      "last_checked": 1792044024.9159157
+    },
+    "apinex:free/gpt-6-luna": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044026.1164038,
+      "error": "Rate limit exceeded on provider 'apinex': Rate limit exceeded. Max 5 requests per minute for this account. Retry in 58s."
+    },
+    "apinex:free/deepseek-v4.1-flash": {
+      "status": "healthy",
+      "latency_ms": 3425.1,
+      "last_checked": 1792044026.1462455
+    },
+    "apinex:free/deepseek-v4-flash-0731": {
+      "status": "healthy",
+      "latency_ms": 3931.9,
+      "last_checked": 1792044026.659461
+    },
+    "apinex:free/glm-5.3-flash": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044026.663267,
+      "error": "Rate limit exceeded on provider 'apinex': Rate limit exceeded. Max 5 requests per minute for this account. Retry in 56s."
+    },
+    "apinex:free/mimo-v2.6-pro": {
+      "status": "rate_limited",
+      "latency_ms": null,
+      "last_checked": 1792044026.6799638,
+      "error": "Rate limit exceeded on provider 'apinex': Rate limit exceeded. Max 5 requests per minute for this account. Retry in 56s."
+    },
+    "apinex:free/qwen-3.8-max": {
+      "status": "healthy",
+      "latency_ms": 5234.2,
+      "last_checked": 1792044027.0005114
+    },
+    "apinex:free/gemini-3.8-flash": {
+      "status": "healthy",
+      "latency_ms": 7153.7,
+      "last_checked": 1792044029.8848622
+    }
+  },
+  "last_recheck": 1792044029.8850434,
+  "version": 2,
+  "antigravity_token": "AQ.Ab8RN6J0Bf1I0WS4Xe0JdVqnxBTvL-TTMYjp12775w4lYi65lA"
+}

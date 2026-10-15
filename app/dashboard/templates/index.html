@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Router — Unified Multi-Provider Gateway</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* -----------------------------------------------------------------
+         1. SLATE GRAY: Dark Architectural Surfaces & Structural Tones
+         ----------------------------------------------------------------- */
+      --bg-base: #0E1114;          /* Deep Slate Canvas */
+      --bg-surface: #13171C;       /* Slate Surface (Header, Bars, Panels) */
+      --bg-card: #181D23;          /* Slate Card Body */
+      --bg-card-hover: #1F252D;    /* Slate Card Hover */
+      --bg-inset: #0A0D10;         /* Deep Slate Inset (Inputs, Code, Rows) */
+
+      --border: rgba(140, 155, 175, 0.16);
+      --border-hover: rgba(212, 185, 150, 0.4);   /* Warm Sand Border Hover */
+      --border-accent: rgba(143, 169, 143, 0.4);  /* Sage Green Border Accent */
+
+      --slate-muted: #8D9BAA;      /* Architectural Slate Secondary Text */
+      --slate-dim: #5E6C7D;        /* Faint Metadata & Markers */
+      --slate-faint: #3A434F;      /* Dividers */
+
+      /* -----------------------------------------------------------------
+         2. SAGE GREEN: Calming Botanical Operational Primary
+         ----------------------------------------------------------------- */
+      --sage: #8FA98F;
+      --sage-hover: #7D987D;
+      --sage-light: #A8C2A8;
+      --sage-bg: rgba(143, 169, 143, 0.14);
+      --sage-border: rgba(143, 169, 143, 0.38);
+
+      /* -----------------------------------------------------------------
+         3. WARM SAND: Earthy Golden Telemetry & Active Highlights
+         ----------------------------------------------------------------- */
+      --warm-sand: #D4B996;
+      --warm-sand-hover: #C5A985;
+      --warm-sand-light: #E2CCA9;
+      --warm-sand-bg: rgba(212, 185, 150, 0.14);
+      --warm-sand-border: rgba(212, 185, 150, 0.38);
+
+      /* -----------------------------------------------------------------
+         4. MUTED CORAL: Soft Terracotta for Inavailable & Warnings
+         ----------------------------------------------------------------- */
+      --muted-coral: #D97D64;
+      --muted-coral-hover: #C66D55;
+      --muted-coral-light: #E5917B;
+      --muted-coral-bg: rgba(217, 125, 100, 0.14);
+      --muted-coral-border: rgba(217, 125, 100, 0.38);
+
+      /* -----------------------------------------------------------------
+         5. BEIGE: Warm Parchment for Headings, Titles & Key Totals
+         ----------------------------------------------------------------- */
+      --beige: #E8DEC8;
+      --beige-dim: #D1C5AC;
+
+      /* -----------------------------------------------------------------
+         6. OFF WHITE: Crisp Chalk for Primary Reading & Model IDs
+         ----------------------------------------------------------------- */
+      --off-white: #F5F5F0;
+      --off-white-muted: #D8D8D2;
+
+      /* Semantic Variable Mapping */
+      --primary: var(--sage);
+      --primary-hover: var(--sage-hover);
+      --primary-bg: var(--sage-bg);
+
+      --accent: var(--warm-sand);
+      --accent-hover: var(--warm-sand-hover);
+
+      --warning: var(--warm-sand);
+      --danger: var(--muted-coral);
+      --success: var(--sage);
+
+      --text-main: var(--off-white);
+      --text-heading: var(--beige);
+      --text-muted: var(--slate-muted);
+      --text-dim: var(--slate-dim);
+      --text-faint: var(--slate-faint);
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      border-radius: 0 !important; /* CRITICAL: ZERO ROUND EDGES ACROSS THE ENTIRE PLATFORM */
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222933;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #343E4D;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(rgba(140, 155, 175, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(19, 23, 28, 0.95);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.65rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-inset);
+      border: 1px solid var(--sage-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sage);
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--beige);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.1rem 0.45rem;
+      background: var(--sage-bg);
+      border: 1px solid var(--sage-border);
+      color: var(--sage);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--border);
+      color: var(--slate-muted);
+      padding: 0.45rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 100ms ease;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .nav-btn:last-child {
+      border-right: none;
+    }
+
+    .nav-btn:hover {
+      color: var(--off-white);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-btn.active {
+      color: var(--off-white);
+      background: #1C222B;
+      border-bottom: 2px solid var(--warm-sand);
+    }
+
+    .btn-header-action {
+      background: rgba(140, 155, 175, 0.06);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.45rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 100ms ease;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-header-action:hover {
+      background: rgba(212, 185, 150, 0.12);
+      border-color: var(--warm-sand-border);
+      color: var(--warm-sand);
+    }
+
+    .btn-header-action.emerald {
+      background: var(--sage-bg);
+      border-color: var(--sage-border);
+      color: var(--sage);
+    }
+
+    .btn-header-action.emerald:hover {
+      background: rgba(143, 169, 143, 0.25);
+    }
+
+    .btn-recheck {
+      background: rgba(140, 155, 175, 0.06);
+      border: 1px solid var(--border);
+      color: var(--slate-muted);
+      padding: 0.45rem 0.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-recheck:hover {
+      background: rgba(212, 185, 150, 0.1);
+      color: var(--warm-sand);
+      border-color: var(--warm-sand-border);
+    }
+
+    .strategy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.65rem;
+      background: var(--warm-sand-bg);
+      border: 1px solid var(--warm-sand-border);
+      font-size: 0.725rem;
+      font-weight: 700;
+      color: var(--warm-sand);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.65rem;
+      background: var(--sage-bg);
+      border: 1px solid var(--sage-border);
+      font-size: 0.725rem;
+      font-weight: 700;
+      color: var(--sage);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--sage);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      padding: 1.5rem 1.75rem;
+      max-width: 1720px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ZERO-ROUND BUTTONS */
+    .btn-primary {
+      background: var(--sage);
+      color: #0E1114;
+      border: 1px solid var(--sage);
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 100ms ease;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-primary:hover {
+      background: var(--sage-hover);
+      border-color: var(--sage-hover);
+    }
+
+    /* ZERO-ROUND INDUSTRIAL TOGGLE SWITCH */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 32px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #222830;
+      border: 1px solid var(--border);
+      transition: all 120ms ease;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 2px;
+      bottom: 2px;
+      background-color: var(--slate-muted);
+      transition: all 120ms ease;
+    }
+
+    input:checked + .slider {
+      background-color: var(--sage-bg);
+      border-color: var(--sage);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(14px);
+      background-color: var(--sage);
+    }
+
+    /* HERO POOL CARD - COMPACT HIGH PRECISION TELEMETRY */
+    .global-pool-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--sage);
+      padding: 1.15rem 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .global-pool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .global-pool-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .global-pool-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--beige);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .global-pool-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sage);
+      background: var(--sage-bg);
+      border: 1px solid var(--sage-border);
+      padding: 0.1rem 0.4rem;
+      font-family: var(--font-mono);
+    }
+
+    .global-pool-sub {
+      font-size: 0.775rem;
+      color: var(--slate-muted);
+      font-family: var(--font-mono);
+    }
+
+    .global-pool-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.55rem;
+      background: var(--sage-bg);
+      border: 1px solid var(--sage-border);
+      color: var(--sage);
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-pulse {
+      width: 5px;
+      height: 5px;
+      background: var(--sage);
+    }
+
+    .btn-micro {
+      background: rgba(140, 155, 175, 0.08);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.3rem 0.65rem;
+      font-size: 0.725rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 100ms ease;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-micro:hover {
+      background: var(--warm-sand-bg);
+      color: var(--warm-sand);
+      border-color: var(--warm-sand-border);
+    }
+
+    .btn-micro.active {
+      background: var(--sage-bg);
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+
+    /* GLOBAL BAR */
+    .global-bar-wrapper {
+      margin-bottom: 1rem;
+    }
+
+    .global-bar-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.45rem;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.775rem;
+    }
+
+    .global-bar-label {
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .global-bar-fraction {
+      color: var(--warm-sand);
+      font-weight: 600;
+    }
+
+    .global-bar-percent {
+      font-weight: 700;
+      color: var(--beige);
+    }
+
+    .global-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .global-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7A967A 0%, #8FA98F 65%, #D4B996 100%);
+      transition: width 0.4s ease;
+      min-width: 2px;
+    }
+
+    .global-bar-shimmer { display: none; }
+
+    /* SUB-BARS GRID */
+    .global-subbars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .subbar-card {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .subbar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.725rem;
+      font-family: var(--font-mono);
+    }
+
+    .subbar-title {
+      color: var(--slate-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .subbar-val {
+      font-weight: 600;
+      color: var(--off-white);
+    }
+
+    .subbar-foot {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--slate-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* QUOTA TRACK & FILL */
+    .quota-bar-track {
+      width: 100%;
+      height: 4px;
+      background: #06080A;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .quota-bar-fill {
+      height: 100%;
+      background: var(--sage);
+      transition: width 0.3s ease;
+    }
+    .quota-bar-fill.accent { background: var(--warm-sand); }
+    .quota-bar-fill.warning { background: var(--warm-sand); }
+    .quota-bar-fill.danger { background: var(--muted-coral); }
+
+    /* METRICS STRIP */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--border);
+      padding: 1rem 1.15rem;
+      transition: border-color 100ms ease;
+    }
+
+    .metric-card:hover {
+      border-color: var(--warm-sand-border);
+      background: var(--bg-card-hover);
+    }
+
+    .metric-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--slate-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: var(--font-mono);
+    }
+
+    .metric-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 0.3rem 0 0.15rem 0;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      color: var(--beige);
+    }
+
+    .metric-sub {
+      font-size: 0.725rem;
+      color: var(--slate-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* SECTION HEADERS */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--beige);
+      font-family: var(--font-mono);
+    }
+
+    .provider-controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================================
+       2. ASYMMETRIC MASONRY PROVIDER LAYOUT (NO EMPTY HOLES, TAKES EXACT SPACE)
+       ========================================================================= */
+    .provider-section-grid {
+      columns: 3 340px;
+      column-gap: 0.85rem;
+    }
+
+    @media (max-width: 1200px) {
+      .provider-section-grid {
+        columns: 2 310px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .provider-section-grid {
+        columns: 1;
+      }
+    }
+
+    .provider-section-card {
+      break-inside: avoid;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 0.85rem;
+      vertical-align: top;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1rem;
+      transition: border-color 100ms ease;
+      box-sizing: border-box;
+      height: auto;
+    }
+
+    .provider-section-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .prov-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid rgba(140, 155, 175, 0.08);
+    }
+
+    .prov-card-header:hover .prov-title {
+      color: var(--warm-sand);
+    }
+
+    .provider-section-card.collapsed .prov-card-header {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .provider-section-card.collapsed .prov-card-body {
+      display: none !important;
+    }
+
+    .prov-title {
+      font-size: 0.925rem;
+      font-weight: 700;
+      color: var(--beige);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.02em;
+    }
+
+    .prov-toggle-glyph {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--warm-sand);
+      width: 16px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .prov-meta {
+      font-size: 0.725rem;
+      color: var(--slate-muted);
+      display: flex;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+    }
+
+    .prov-meta b {
+      color: var(--off-white);
+    }
+
+    .prov-card-body {
+      padding-top: 0.65rem;
+    }
+
+    .prov-limits-block {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .prov-limit-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .prov-limit-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--slate-muted);
+      font-family: var(--font-mono);
+    }
+
+    .prov-limit-meta strong {
+      color: var(--off-white);
+    }
+
+    .health-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .health-pill.healthy {
+      background: var(--sage-bg);
+      color: var(--sage);
+      border: 1px solid var(--sage-border);
+    }
+
+    .health-pill.no_key {
+      background: var(--muted-coral-bg);
+      color: var(--muted-coral);
+      border: 1px solid var(--muted-coral-border);
+    }
+
+    .health-pill.rate_limited {
+      background: var(--warm-sand-bg);
+      color: var(--warm-sand);
+      border: 1px solid var(--warm-sand-border);
+    }
+
+    .health-pill.unknown {
+      background: rgba(140, 155, 175, 0.08);
+      color: var(--slate-muted);
+      border: 1px solid var(--border);
+    }
+
+    .badge-chip {
+      font-size: 0.65rem;
+      padding: 0.1rem 0.35rem;
+      background: rgba(140, 155, 175, 0.08);
+      color: var(--slate-muted);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+    }
+
+    .badge-chip.ctx {
+      color: var(--warm-sand);
+      background: var(--warm-sand-bg);
+      border-color: var(--warm-sand-border);
+    }
+
+    /* CONTROLS BAR */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      flex: 1;
+      max-width: 380px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--off-white);
+      font-size: 0.825rem;
+      font-family: var(--font-mono);
+      outline: none;
+      width: 100%;
+    }
+
+    .filter-options {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.775rem;
+      color: var(--slate-muted);
+      font-family: var(--font-mono);
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================================
+       3. MODEL CATEGORIES (AVAILABLE & INAVAILABLE)
+       ========================================================================= */
+    .model-category-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .model-category-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .model-category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+    }
+
+    .model-category-header.category-available {
+      border-left: 3px solid var(--sage);
+      color: var(--sage);
+    }
+
+    .model-category-header.category-inavailable {
+      border-left: 3px solid var(--muted-coral);
+      color: var(--muted-coral);
+    }
+
+    .model-category-count {
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(140, 155, 175, 0.12);
+      padding: 0.05rem 0.35rem;
+      color: var(--off-white);
+    }
+
+    .empty-category-notice {
+      font-size: 0.7rem;
+      color: var(--slate-dim);
+      font-family: var(--font-mono);
+      padding: 0.4rem 0.6rem;
+      background: rgba(140, 155, 175, 0.03);
+      border: 1px dashed var(--border);
+    }
+
+    /* MODEL ROWS (DECLUTTERED, NO STATUS OPTION BADGE) */
+    .model-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .model-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0.65rem;
+      background: var(--bg-inset);
+      border: 1px solid rgba(140, 155, 175, 0.08);
+      transition: all 100ms ease;
+    }
+
+    .model-row:hover {
+      border-color: var(--border-hover);
+      background: rgba(140, 155, 175, 0.04);
+    }
+
+    .model-row.is-inavailable {
+      opacity: 0.55;
+    }
+
+    .model-info-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      max-width: 82%;
+    }
+
+    .model-id-label {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--off-white);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      word-break: break-all;
+    }
+
+    .model-badges {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    /* STRATEGY PRESETS */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .preset-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.85rem;
+      transition: all 100ms ease;
+    }
+
+    .preset-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .preset-card.active {
+      border-color: var(--warm-sand);
+      background: var(--warm-sand-bg);
+    }
+
+    .preset-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--beige);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+    }
+
+    .preset-desc {
+      font-size: 0.775rem;
+      color: var(--slate-muted);
+      line-height: 1.4;
+      margin-top: 0.35rem;
+    }
+
+    .preset-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(140, 155, 175, 0.1);
+      padding-top: 0.65rem;
+    }
+
+    .btn-apply-strategy {
+      background: rgba(140, 155, 175, 0.08);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-apply-strategy:hover {
+      background: var(--sage);
+      color: #0E1114;
+      border-color: var(--sage);
+    }
+
+    /* WATERFALL LIST */
+    .waterfall-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .waterfall-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .waterfall-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 0.85rem;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    .waterfall-details {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .rank-badge {
+      background: rgba(140, 155, 175, 0.08);
+      border: 1px solid var(--border);
+      color: var(--slate-dim);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+    }
+
+    .waterfall-prov {
+      color: var(--warm-sand);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .waterfall-model {
+      color: var(--off-white);
+      font-weight: 600;
+    }
+
+    .waterfall-btns {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .btn-icon {
+      background: rgba(140, 155, 175, 0.06);
+      border: 1px solid var(--border);
+      color: var(--slate-muted);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .btn-icon:hover {
+      background: rgba(212, 185, 150, 0.15);
+      color: var(--warm-sand);
+      border-color: var(--warm-sand-border);
+    }
+
+    /* FALLBACK CHAINS */
+    .chain-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.15rem;
+      margin-bottom: 1rem;
+    }
+
+    .chain-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--beige);
+      font-family: var(--font-mono);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chain-steps {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .chain-step {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chain-arrow {
+      color: var(--slate-dim);
+      font-size: 0.85rem;
+    }
+
+    /* =========================================================================
+       4. PLAYGROUND - DUAL PANE INDUSTRIAL WORKSTATION
+       ========================================================================= */
+    .playground-container {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 1.25rem;
+      align-items: stretch;
+      min-height: 600px;
+    }
+
+    @media (max-width: 1080px) {
+      .playground-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .play-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .play-controls-pane {
+      background: var(--bg-card);
+    }
+
+    .play-response-pane {
+      background: var(--bg-card);
+      border-left: 3px solid var(--warm-sand);
+    }
+
+    .play-pane-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      color: var(--beige);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid rgba(140, 155, 175, 0.12);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .play-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .play-form-group label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--slate-muted);
+      font-family: var(--font-mono);
+    }
+
+    .play-input, .play-select, .play-textarea {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.55rem 0.75rem;
+      font-size: 0.825rem;
+      font-family: var(--font-mono);
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 100ms ease;
+    }
+
+    .play-input:focus, .play-select:focus, .play-textarea:focus {
+      border-color: var(--warm-sand);
+      background: #0B0E12;
+    }
+
+    .play-select {
+      cursor: pointer;
+    }
+
+    .play-select option, .play-select optgroup {
+      background: var(--bg-card);
+      color: var(--off-white);
+    }
+
+    .play-textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.5;
+    }
+
+    .play-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(140, 155, 175, 0.1);
+      flex-wrap: wrap;
+    }
+
+    .play-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.775rem;
+      font-family: var(--font-mono);
+      color: var(--slate-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .play-checkbox-label input[type="checkbox"] {
+      accent-color: var(--sage);
+      width: 14px;
+      height: 14px;
+    }
+
+    .play-meta-chip {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      color: var(--slate-muted);
+    }
+
+    .play-meta-chip.warm {
+      color: var(--warm-sand);
+      border-color: var(--warm-sand-border);
+      background: var(--warm-sand-bg);
+    }
+
+    .play-meta-chip.sage {
+      color: var(--sage);
+      border-color: var(--sage-border);
+      background: var(--sage-bg);
+    }
+
+    .response-terminal-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      min-height: 420px;
+      position: relative;
+    }
+
+    .terminal-body {
+      flex: 1;
+      padding: 1rem 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      line-height: 1.65;
+      color: var(--off-white);
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-y: auto;
+    }
+
+    /* CLIENT SETUP */
+    .guide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .guide-card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--beige);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .code-snippet {
+      background: var(--bg-inset);
+      border: 1px solid var(--border);
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      color: var(--warm-sand);
+      overflow-x: auto;
+      position: relative;
+      margin: 0.65rem 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      background: rgba(140, 155, 175, 0.1);
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      padding: 0.2rem 0.5rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .copy-btn:hover {
+      background: var(--warm-sand-bg);
+      border-color: var(--warm-sand-border);
+      color: var(--warm-sand);
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--sage);
+      color: var(--off-white);
+      padding: 0.65rem 1.15rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4B996" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" fill="#8FA98F" fill-opacity="0.5"></circle>
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>LLM Router <span class="brand-tag">v1.0 Gateway</span></h1>
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">Autonomous Multi-Provider Routing Fabric</div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <nav class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('overview')">Overview</button>
+        <button class="nav-btn" onclick="switchTab('models')">Models &amp; Toggles</button>
+        <button class="nav-btn" onclick="switchTab('strategies')">Routing Hierarchy</button>
+        <button class="nav-btn" onclick="switchTab('chains')">Fallback Chains</button>
+        <button class="nav-btn" onclick="switchTab('playground')">Playground</button>
+        <button class="nav-btn" onclick="switchTab('setup')">Client Setup</button>
+      </nav>
+
+      <button class="btn-header-action emerald" onclick="openAntigravityAuthModal()">
+        Antigravity Auth
+      </button>
+
+      <a href="/portal" target="_blank" class="btn-header-action">
+        FreeLLM Portal ↗
+      </a>
+
+      <button class="btn-recheck" id="btn-recheck" onclick="triggerRecheck()">
+        <span id="recheck-spinner">↻</span> Recheck Models
+      </button>
+
+      <div class="strategy-badge" id="hdr-strategy-badge">
+        Strategy: <span id="hdr-strategy-name">Default</span>
+      </div>
+
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="uptime-text">Online</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-content active">
+
+      <!-- GLOBAL POOLED CAPACITY HERO BAR -->
+      <div class="global-pool-card">
+        <div class="global-pool-header">
+          <div class="global-pool-title-group">
+            <div class="global-pool-badge">POOLED CAPACITY</div>
+            <h2 class="global-pool-heading">
+              Combined Multi-Provider Limits Pool
+            </h2>
+            <div class="global-pool-sub">
+              Aggregated quota across all 38 AI labs and local accelerators (1.25B monthly tokens)
+            </div>
+          </div>
+          <div class="global-pool-actions">
+            <div class="live-pill" title="Auto-refreshes every 5 seconds">
+              <span class="live-pulse"></span> Live Auto-Sync
+            </div>
+            <button class="global-refresh-btn" id="btn-global-refresh" onclick="manualRefreshStats()" title="Refresh limits immediately">
+              <span id="global-refresh-icon">↻</span> Refresh Limits
+            </button>
+          </div>
+        </div>
+
+        <!-- PRIMARY TOKENS LIMIT BAR -->
+        <div class="global-bar-wrapper">
+          <div class="global-bar-meta">
+            <span class="global-bar-label">
+              <strong>Combined Token Consumption</strong>
+              <span class="global-bar-fraction" id="global-token-fraction">0 / 1,250,000,000 Tokens</span>
+            </span>
+            <span class="global-bar-percent" id="global-token-pct">0.0000% Used</span>
+          </div>
+          <div class="global-bar-track">
+            <div class="global-bar-fill" id="global-token-fill" style="width: 0%;">
+              <div class="global-bar-shimmer"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPANION MINI LIMIT BARS (RPD & RPM) -->
+        <div class="global-subbars-grid">
+          <div class="subbar-card">
+            <div class="subbar-header">
+              <span class="subbar-title">Daily Requests Pool (RPD)</span>
+              <span class="subbar-val" id="global-rpd-val">0 / 165,150 RPD</span>
+            </div>
+            <div class="quota-bar-track">
+              <div class="quota-bar-fill" id="global-rpd-fill" style="width: 0%;"></div>
+            </div>
+            <div class="subbar-foot">
+              <span id="global-rpd-pct">0% Used</span>
+              <span>Resets 00:00 UTC</span>
+            </div>
+          </div>
+
+          <div class="subbar-card">
+            <div class="subbar-header">
+              <span class="subbar-title">Concurrency Throttle (RPM)</span>
+              <span class="subbar-val" id="global-rpm-val">0 / 1,174 RPM</span>
+            </div>
+            <div class="quota-bar-track">
+              <div class="quota-bar-fill accent" id="global-rpm-fill" style="width: 0%;"></div>
+            </div>
+            <div class="subbar-foot">
+              <span id="global-rpm-pct">0% Active</span>
+              <span>Across 38 Providers</span>
+            </div>
+          </div>
+
+          <div class="subbar-card">
+            <div class="subbar-header">
+              <span class="subbar-title">Available Headroom</span>
+              <span class="subbar-val" id="global-headroom-val" style="color: var(--success);">1.25B Tokens Free</span>
+            </div>
+            <div class="quota-bar-track">
+              <div class="quota-bar-fill success" id="global-headroom-fill" style="width: 100%;"></div>
+            </div>
+            <div class="subbar-foot">
+              <span>Zero Cost Free Tiers</span>
+              <span id="global-active-keys-hint">0 Providers Keyed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Total Requests</div>
+          <div class="metric-value" id="stat-total-requests">0</div>
+          <div class="metric-sub" id="stat-success-rate">100% Success Rate</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Tokens Processed</div>
+          <div class="metric-value" id="stat-total-tokens">0</div>
+          <div class="metric-sub">Across all pooled providers</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Current Load</div>
+          <div class="metric-value" id="stat-current-rpm">0 <span style="font-size: 1rem;">RPM</span></div>
+          <div class="metric-sub" id="stat-current-tpm">0 TPM</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-title">Active Providers</div>
+          <div class="metric-value" id="stat-active-providers">0 / 13</div>
+          <div class="metric-sub" id="stat-total-keys">0 Keys Configured</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <h2 class="section-title">PROVIDER STATUS &amp; POOLS</h2>
+          <span id="prov-count-indicator" style="font-size:0.725rem; color:var(--text-dim); font-family:var(--font-mono);">38 Labs</span>
+        </div>
+        <div class="provider-controls-bar">
+          <button class="btn-micro" onclick="toggleAllProviders(true)">Expand All</button>
+          <button class="btn-micro" onclick="toggleAllProviders(false)">Collapse All</button>
+          <button class="btn-micro" id="btn-filter-keyed" onclick="toggleKeyedOnly()">Keyed Only</button>
+          <button class="btn-primary" id="btn-reload-keys" onclick="reloadKeys()">
+            <span id="reload-keys-spinner">↻</span> Reload .env
+          </button>
+        </div>
+      </div>
+
+      <div class="provider-section-grid" id="overview-provider-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: MODELS & TOGGLES -->
+    <section id="tab-models" class="tab-content">
+      <div class="controls-bar">
+        <div class="search-box">
+          <span style="font-size:0.7rem; color:var(--text-dim); font-family:var(--font-mono); font-weight:700;">SEARCH</span>
+          <input type="text" id="model-search-input" placeholder="Filter models or providers..." oninput="filterModels()">
+        </div>
+
+        <div class="filter-options">
+          <button class="btn-micro" onclick="toggleAllModelCards(true)">Expand All</button>
+          <button class="btn-micro" onclick="toggleAllModelCards(false)">Collapse All</button>
+          <button class="btn-micro" onclick="bulkToggleAll(false)">Enable All</button>
+          <button class="btn-micro" onclick="bulkToggleAll(true)">Disable All</button>
+        </div>
+      </div>
+
+      <div class="provider-section-grid" id="models-provider-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: ROUTING HIERARCHY & PRESETS -->
+    <section id="tab-strategies" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Routing Strategy Presets</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+            Select a pre-built strategy or configure your custom waterfall cascade order.
+          </p>
+        </div>
+      </div>
+
+      <div class="strategy-grid" id="presets-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="waterfall-container">
+        <div class="section-header">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">Active Priority Waterfall Hierarchy</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+              When requests arrive, models are executed in top-to-bottom sequence. If Priority #1 fails or throttles, the router immediately cascades to Priority #2.
+            </p>
+          </div>
+          <button class="btn-primary" style="padding: 0.45rem 1rem; font-size: 0.825rem;" onclick="saveCustomPriority()">
+            Save Custom Cascade
+          </button>
+        </div>
+
+        <div class="waterfall-list" id="waterfall-list-container">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="add-waterfall-bar">
+          <select id="add-waterfall-select" style="min-width: 280px;">
+            <!-- Rendered by JS -->
+          </select>
+          <button class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.825rem;" onclick="addToWaterfall()">
+            + Add to Cascade
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: FALLBACK CHAINS -->
+    <section id="tab-chains" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Virtual Aliases &amp; Fallback Chains</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+            Endpoints targeted by Claude Desktop, Claude Code, and OpenAI tools.
+          </p>
+        </div>
+      </div>
+      <div class="chain-list" id="chain-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 5: PLAYGROUND -->
+    <section id="tab-playground" class="tab-content">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">INTERACTIVE GATEWAY PLAYGROUND</h2>
+          <p style="font-size: 0.775rem; color: var(--slate-muted); font-family: var(--font-mono); margin-top: 0.25rem;">
+            Test virtual stacks, provider routing, failover cascades, and streaming latency in real-time.
+          </p>
+        </div>
+      </div>
+
+      <div class="playground-container">
+        <!-- LEFT: REQUEST CONFIGURATION -->
+        <div class="play-card play-controls-pane">
+          <div class="play-pane-title">
+            <span>REQUEST CONFIGURATION</span>
+            <span class="badge-chip ctx">HTTP POST /v1/chat/completions</span>
+          </div>
+
+          <div class="play-form-group">
+            <label for="play-key">MASTER API KEY (X-API-KEY)</label>
+            <input type="text" id="play-key" class="play-input" value="llm-router-secret-key-12345" placeholder="Router Master Key">
+          </div>
+
+          <div class="play-form-group">
+            <label for="play-model">TARGET MODEL / VIRTUAL ALIAS</label>
+            <select id="play-model" class="play-select">
+              <optgroup label="Virtual Task-Centric Stacks">
+                <option value="pro-coding-reasoning" selected>pro-coding-reasoning (Pro Coding &amp; Reasoning)</option>
+                <option value="fast-planning-light">fast-planning-light (Fast Planning &amp; Light Logic)</option>
+                <option value="general-massive-quota">general-massive-quota (General Tasks &amp; Massive Quota)</option>
+              </optgroup>
+              <optgroup label="Claude Desktop Aliases">
+                <option value="claude-3-7-sonnet-latest">claude-3-7-sonnet-latest (Claude 3.7 Sonnet)</option>
+                <option value="claude-3-5-haiku-20241022">claude-3-5-haiku-20241022 (Claude 3.5 Haiku)</option>
+                <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet-20241022 (Claude 3.5 Sonnet)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="play-form-group">
+            <label for="play-system">SYSTEM PROMPT (OPTIONAL)</label>
+            <input type="text" id="play-system" class="play-input" value="You are a helpful and concise coding assistant." placeholder="System instruction...">
+          </div>
+
+          <div class="play-form-group" style="flex: 1;">
+            <label for="play-prompt">USER PROMPT</label>
+            <textarea id="play-prompt" class="play-textarea" placeholder="Type prompt here...">Hello! Can you verify that the LLM Router is functioning properly?</textarea>
+          </div>
+
+          <div class="play-actions-bar">
+            <button class="btn-primary" id="play-submit-btn" onclick="runPlayground()">
+              <span>Execute Request</span>
+            </button>
+            <label class="play-checkbox-label">
+              <input type="checkbox" id="play-stream" checked>
+              <span>Stream SSE</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- RIGHT: LIVE RESPONSE TERMINAL -->
+        <div class="play-card play-response-pane">
+          <div class="play-pane-title">
+            <span>INSPECTION CONSOLE</span>
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <span id="play-routing-info" class="play-meta-chip">Routing: Standby</span>
+              <span id="play-latency-info" class="play-meta-chip warm">Latency: 0ms</span>
+            </div>
+          </div>
+
+          <div class="response-terminal-wrap">
+            <div class="terminal-body" id="play-response-body">Click 'Execute Request' to test the gateway fabric...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: CLIENT SETUP -->
+    <section id="tab-setup" class="tab-content">
+      <div class="guide-card">
+        <h3>1. Claude Desktop (Native Third-Party Gateway)</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+          Connect Claude Desktop natively using Developer Mode:
+        </p>
+        <ol style="margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+          <li>In Claude Desktop, click <b>Help</b> &gt; <b>Troubleshooting</b> &gt; <b>Enable Developer Mode</b>.</li>
+          <li>Click the new <b>Developer</b> menu &gt; <b>Configure Third-Party Inference</b>.</li>
+          <li>Set <b>Connection Type</b> to <code>Gateway</code>.</li>
+          <li>Set <b>Gateway Base URL</b> to:</li>
+        </ol>
+        <div class="code-snippet">
+          <button class="copy-btn" onclick="copyText('http://localhost:8080/v1')">Copy</button>
+          http://localhost:8080/v1
+        </div>
+        <ol start="5" style="margin-left: 1.5rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+          <li>Set <b>Gateway Credentials</b> to <b>Static API Key</b> and enter your Master Key:</li>
+        </ol>
+        <div class="code-snippet">
+          <button class="copy-btn" onclick="copyText('llm-router-secret-key-12345')">Copy</button>
+          llm-router-secret-key-12345
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <h3>2. Claude Code CLI</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+          Run the official Claude Code CLI entirely for free through your local gateway:
+        </p>
+        <div class="code-snippet">
+          <button class="copy-btn" onclick="copyText('$env:ANTHROPIC_BASE_URL=\'http://localhost:8080\'\n$env:ANTHROPIC_API_KEY=\'llm-router-secret-key-12345\'\nclaude')">Copy (PowerShell)</button>
+          # PowerShell
+$env:ANTHROPIC_BASE_URL="http://localhost:8080"
+$env:ANTHROPIC_API_KEY="llm-router-secret-key-12345"
+claude
+        </div>
+        <div class="code-snippet">
+          <button class="copy-btn" onclick="copyText('export ANTHROPIC_BASE_URL=http://localhost:8080\nexport ANTHROPIC_API_KEY=llm-router-secret-key-12345\nclaude')">Copy (Bash)</button>
+          # Bash / Zsh
+export ANTHROPIC_BASE_URL=http://localhost:8080
+export ANTHROPIC_API_KEY=llm-router-secret-key-12345
+claude
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <h3>3. Cursor / VS Code / Open WebUI (OpenAI Protocol)</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+          Use LLM Router with any standard OpenAI-compatible tool:
+        </p>
+        <div class="code-snippet">
+          Base URL: http://localhost:8080/v1
+API Key:  llm-router-secret-key-12345
+Model:    mega-pool  OR  claude-3-7-sonnet-latest  OR  gpt-4o
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <script>
+    let routerStats = {};
+    let adminModelsData = {};
+    let strategyData = {};
+    let activeWaterfall = [];
+    let MASTER_KEY = 'llm-router-secret-key-12345';
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.display = 'flex';
+      setTimeout(() => { t.style.display = 'none'; }, 2600);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
+
+      const btn = Array.from(document.querySelectorAll('.nav-btn')).find(b => 
+        b.getAttribute('onclick') && b.getAttribute('onclick').includes(tabId)
+      );
+      if (btn) btn.classList.add('active');
+
+      if (tabId === 'models') loadAdminModels();
+      if (tabId === 'strategies') loadStrategies();
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard!');
+    }
+
+    // -----------------------------------------------------------------
+    // API CALLS
+    // -----------------------------------------------------------------
+    async function fetchConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (!res.ok) return;
+        const cfg = await res.json();
+        MASTER_KEY = cfg.master_key || MASTER_KEY;
+        const keyInput = document.getElementById('play-key');
+        if (keyInput) keyInput.value = MASTER_KEY;
+      } catch (err) {
+        console.error('Config error:', err);
+      }
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/stats');
+        if (!res.ok) return;
+        routerStats = await res.json();
+        renderOverview();
+        const modelsTab = document.getElementById('tab-models');
+        if (modelsTab && modelsTab.classList.contains('active')) {
+          renderModelsList();
+        }
+      } catch (err) {
+        console.error('Stats error:', err);
+      }
+    }
+
+    async function manualRefreshStats() {
+      const btn = document.getElementById('btn-global-refresh');
+      if (btn) btn.classList.add('spinning');
+      try {
+        const reloadRes = await fetch('/api/reload-keys', { method: 'POST' });
+        const reloadData = await reloadRes.json();
+        await fetchStats();
+        await loadAdminModels();
+        const count = reloadData.active_count || (reloadData.active_providers ? reloadData.active_providers.length : 0);
+        showToast(`Limits & Keys synced: ${count} / 38 providers active!`);
+      } catch (e) {
+        showToast('Failed to refresh limits: ' + e);
+      } finally {
+        setTimeout(() => {
+          if (btn) btn.classList.remove('spinning');
+        }, 600);
+      }
+    }
+
+    async function reloadKeys() {
+      const btn = document.getElementById('btn-reload-keys');
+      const spinner = document.getElementById('reload-keys-spinner');
+      if (btn) btn.classList.add('loading');
+      if (spinner) {
+        spinner.style.display = 'inline-block';
+        spinner.style.animation = 'spin 0.7s linear infinite';
+      }
+      showToast('Reading updated keys from .env...');
+
+      try {
+        const res = await fetch('/api/reload-keys', { method: 'POST' });
+        const data = await res.json();
+        const count = data.active_count || (data.active_providers ? data.active_providers.length : 0);
+        showToast(`API Keys reloaded: ${count} / 38 providers active!`);
+        await fetchStats();
+        await loadAdminModels();
+      } catch (err) {
+        showToast('Failed to reload keys: ' + err);
+      } finally {
+        if (btn) btn.classList.remove('loading');
+        if (spinner) spinner.style.animation = 'none';
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // RECHECK MODELS (LIVE PROBE)
+    // -----------------------------------------------------------------
+    async function triggerRecheck() {
+      const btn = document.getElementById('btn-recheck');
+      const spinner = document.getElementById('recheck-spinner');
+      btn.classList.add('loading');
+      spinner.style.display = 'inline-block';
+      spinner.style.animation = 'spin 0.8s linear infinite';
+      showToast('Live probing models across all providers...');
+
+      try {
+        const res = await fetch('/api/admin/models/recheck', { method: 'POST' });
+        const data = await res.json();
+        showToast(`Verification complete: ${data.healthy} / ${data.total_models} models operational`);
+        await loadAdminModels();
+      } catch (err) {
+        showToast('Recheck failed: ' + err);
+      } finally {
+        btn.classList.remove('loading');
+        spinner.style.animation = 'none';
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // ADMIN MODELS & TOGGLES
+    // -----------------------------------------------------------------
+    async function loadAdminModels() {
+      try {
+        const res = await fetch('/api/admin/models');
+        if (!res.ok) return;
+        adminModelsData = await res.json();
+        renderModelsList();
+        updateStrategyBadge(adminModelsData.active_strategy);
+      } catch (err) {
+        console.error('Failed to load admin models:', err);
+      }
+    }
+
+    function updateStrategyBadge(name) {
+      const el = document.getElementById('hdr-strategy-name');
+      if (el) el.innerText = name.replace('_', ' ').toUpperCase();
+    }
+
+    async function toggleModel(providerId, modelId, disabled) {
+      try {
+        const res = await fetch('/api/admin/models/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: providerId, model: modelId, disabled: disabled })
+        });
+        if (res.ok) {
+          showToast(`${modelId}: ${disabled ? 'DISABLED' : 'ENABLED'}`);
+          loadAdminModels();
+        }
+      } catch (err) {
+        showToast('Toggle failed: ' + err);
+      }
+    }
+
+    async function bulkToggleAll(disabled) {
+      if (!adminModelsData.providers) return;
+      const toggles = {};
+      for (const [pId, pData] of Object.entries(adminModelsData.providers)) {
+        for (const m of pData.models) {
+          toggles[`${pId}:${m.id}`] = disabled;
+        }
+      }
+      try {
+        await fetch('/api/admin/models/bulk-toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ toggles: toggles })
+        });
+        showToast(`All models set to ${disabled ? 'DISABLED' : 'ENABLED'}`);
+        loadAdminModels();
+      } catch (err) {
+        showToast('Bulk toggle failed: ' + err);
+      }
+    }
+
+let collapsedModelsSet = new Set();
+
+    function filterModels() {
+      renderModelsList();
+    }
+
+    function toggleModelCard(pId) {
+      if (collapsedModelsSet.has(pId)) {
+        collapsedModelsSet.delete(pId);
+      } else {
+        collapsedModelsSet.add(pId);
+      }
+      const card = document.getElementById(`model-card-${pId}`);
+      const glyph = document.getElementById(`model-glyph-${pId}`);
+      if (card && glyph) {
+        if (collapsedModelsSet.has(pId)) {
+          card.classList.add('collapsed');
+          glyph.innerText = '+';
+        } else {
+          card.classList.remove('collapsed');
+          glyph.innerText = '−';
+        }
+      }
+    }
+
+    function toggleAllModelCards(expand) {
+      if (!adminModelsData || !adminModelsData.providers) return;
+      Object.keys(adminModelsData.providers).forEach(pId => {
+        if (expand) collapsedModelsSet.delete(pId);
+        else collapsedModelsSet.add(pId);
+      });
+      renderModelsList();
+    }
+
+    function renderModelsList() {
+      const container = document.getElementById('models-provider-container');
+      if (!container || !adminModelsData || !adminModelsData.providers) return;
+
+      const searchVal = (document.getElementById('model-search-input')?.value || '').toLowerCase();
+
+      container.innerHTML = '';
+
+      for (const [pId, pData] of Object.entries(adminModelsData.providers)) {
+        const matchingModels = pData.models.filter(m => {
+          return !searchVal || m.id.toLowerCase().includes(searchVal) || m.name.toLowerCase().includes(searchVal) || pId.toLowerCase().includes(searchVal);
+        });
+
+        if (matchingModels.length === 0) continue;
+
+        // Partition strictly into 2 categories: AVAILABLE vs INAVAILABLE
+        const availableModels = [];
+        const inavailableModels = [];
+
+        matchingModels.forEach(m => {
+          const hasKey = pData.has_keys || pData.key_count > 0;
+          const isOperational = (m.health_status !== 'no_key' && m.health_status !== 'rate_limited' && m.health_status !== 'circuit_broken');
+          const isAvailable = hasKey && !m.disabled && isOperational;
+
+          if (isAvailable) {
+            availableModels.push(m);
+          } else {
+            inavailableModels.push(m);
+          }
+        });
+
+        const isCollapsed = collapsedModelsSet.has(pId);
+        const card = document.createElement('div');
+        card.className = `provider-section-card ${isCollapsed ? 'collapsed' : ''}`;
+        card.id = `model-card-${pId}`;
+
+        const renderRow = (m, isAvailableCategory) => {
+          const isChecked = !m.disabled;
+          return `
+            <div class="model-row ${isAvailableCategory ? '' : 'is-inavailable'}">
+              <div class="model-info-wrap">
+                <div class="model-id-label">
+                  <span>${m.id}</span>
+                </div>
+                <div class="model-badges">
+                  <span class="badge-chip ctx">${(m.context_window / 1000).toFixed(0)}k ctx</span>
+                  ${m.supports_tools ? '<span class="badge-chip">Tools</span>' : ''}
+                  ${m.supports_vision ? '<span class="badge-chip">Vision</span>' : ''}
+                  ${m.supports_thinking ? '<span class="badge-chip">Reasoning</span>' : ''}
+                </div>
+              </div>
+
+              <label class="switch" title="${isChecked ? 'Click to disable' : 'Click to enable'}">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleModel('${pId}', '${m.id}', !this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+          `;
+        };
+
+        const availableHtml = availableModels.length > 0 
+          ? availableModels.map(m => renderRow(m, true)).join('')
+          : '<div class="empty-category-notice">No models currently available</div>';
+
+        const inavailableHtml = inavailableModels.length > 0 
+          ? inavailableModels.map(m => renderRow(m, false)).join('')
+          : '<div class="empty-category-notice">0 inavailable models</div>';
+
+        card.innerHTML = `
+          <div class="prov-card-header" onclick="toggleModelCard('${pId}')" title="Click to collapse / expand">
+            <div class="prov-title">
+              <span class="prov-toggle-glyph" id="model-glyph-${pId}">${isCollapsed ? '+' : '−'}</span>
+              <span>${pData.name}</span>
+              <span class="badge-chip">${matchingModels.length} models</span>
+            </div>
+            <div class="prov-meta">
+              <span><b>${availableModels.length}</b> avail</span>
+              <span><b>${inavailableModels.length}</b> inavail</span>
+            </div>
+          </div>
+
+          <div class="prov-card-body" id="model-body-${pId}">
+            <!-- CATEGORY 1: AVAILABLE -->
+            <div class="model-category-block">
+              <div class="model-category-header category-available">
+                <span>AVAILABLE</span>
+                <span class="model-category-count">${availableModels.length}</span>
+              </div>
+              <div class="model-list">
+                ${availableHtml}
+              </div>
+            </div>
+
+            <!-- CATEGORY 2: INAVAILABLE -->
+            <div class="model-category-block">
+              <div class="model-category-header category-inavailable">
+                <span>INAVAILABLE</span>
+                <span class="model-category-count">${inavailableModels.length}</span>
+              </div>
+              <div class="model-list">
+                ${inavailableHtml}
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // STRATEGIES & HIERARCHY
+    // -----------------------------------------------------------------
+    async function loadStrategies() {
+      try {
+        const res = await fetch('/api/admin/strategy');
+        if (!res.ok) return;
+        strategyData = await res.json();
+        renderPresets();
+        renderWaterfall();
+        populateWaterfallPicker();
+      } catch (err) {
+        console.error('Failed to load strategies:', err);
+      }
+    }
+
+    function renderPresets() {
+      const container = document.getElementById('presets-container');
+      if (!container || !strategyData.presets) return;
+
+      container.innerHTML = '';
+      const active = strategyData.active;
+
+      for (const [key, preset] of Object.entries(strategyData.presets)) {
+        const isActive = active === key;
+        const div = document.createElement('div');
+        div.className = `preset-card ${isActive ? 'active' : ''}`;
+
+        div.innerHTML = `
+          <div>
+            <div class="preset-name">
+              ${preset.name}
+              ${isActive ? '<span class="status-pill" style="font-size:0.65rem; padding:0.2rem 0.5rem;">Active</span>' : ''}
+            </div>
+            <div class="preset-desc">${preset.description}</div>
+          </div>
+          <div class="preset-action">
+            <span style="font-size: 0.72rem; color: var(--text-muted);">${(preset.priority || []).length} cascaded models</span>
+            <button class="btn-apply-strategy" onclick="applyStrategy('${key}')">
+              ${isActive ? 'Applied' : 'Activate'}
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    async function applyStrategy(name) {
+      try {
+        const res = await fetch('/api/admin/strategy/set', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ strategy: name })
+        });
+        if (res.ok) {
+          showToast(`Active routing strategy changed to: ${name}`);
+          updateStrategyBadge(name);
+          loadStrategies();
+        }
+      } catch (err) {
+        showToast('Failed to set strategy: ' + err);
+      }
+    }
+
+    function renderWaterfall() {
+      const container = document.getElementById('waterfall-list-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      // If active waterfall not populated, load from preset
+      const activeKey = strategyData.active;
+      let priority = [];
+      if (activeKey === 'custom') {
+        priority = strategyData.custom_priority || [];
+      } else if (strategyData.presets && strategyData.presets[activeKey]) {
+        priority = strategyData.presets[activeKey].priority || [];
+      }
+
+      activeWaterfall = [...priority];
+
+      if (activeWaterfall.length === 0) {
+        container.innerHTML = `<div style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;">Using default tier-based routing. Add models below to customize cascade.</div>`;
+        return;
+      }
+
+      activeWaterfall.forEach((item, idx) => {
+        const pId = item[0];
+        const mId = item[1];
+        const div = document.createElement('div');
+        div.className = 'waterfall-item';
+
+        div.innerHTML = `
+          <div class="waterfall-details">
+            <div class="rank-badge">#${idx + 1}</div>
+            <span class="waterfall-prov">${pId}</span>
+            <span class="waterfall-model">${mId}</span>
+          </div>
+          <div class="waterfall-btns">
+            <button class="btn-icon" title="Move Up" onclick="moveWaterfall(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+            <button class="btn-icon" title="Move Down" onclick="moveWaterfall(${idx}, 1)" ${idx === activeWaterfall.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+            <button class="btn-icon" title="Remove" onclick="removeWaterfall(${idx})" style="color:#ef4444;">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function moveWaterfall(idx, delta) {
+      const newIdx = idx + delta;
+      if (newIdx < 0 || newIdx >= activeWaterfall.length) return;
+      const item = activeWaterfall.splice(idx, 1)[0];
+      activeWaterfall.splice(newIdx, 0, item);
+      renderWaterfallFromActive();
+    }
+
+    function removeWaterfall(idx) {
+      activeWaterfall.splice(idx, 1);
+      renderWaterfallFromActive();
+    }
+
+    function renderWaterfallFromActive() {
+      const container = document.getElementById('waterfall-list-container');
+      container.innerHTML = '';
+      activeWaterfall.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'waterfall-item';
+        div.innerHTML = `
+          <div class="waterfall-details">
+            <div class="rank-badge">#${idx + 1}</div>
+            <span class="waterfall-prov">${item[0]}</span>
+            <span class="waterfall-model">${item[1]}</span>
+          </div>
+          <div class="waterfall-btns">
+            <button class="btn-icon" onclick="moveWaterfall(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+            <button class="btn-icon" onclick="moveWaterfall(${idx}, 1)" ${idx === activeWaterfall.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+            <button class="btn-icon" onclick="removeWaterfall(${idx})" style="color:#ef4444;">✕</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function populateWaterfallPicker() {
+      const select = document.getElementById('add-waterfall-select');
+      if (!select || !adminModelsData.providers) return;
+      select.innerHTML = '';
+
+      for (const [pId, pData] of Object.entries(adminModelsData.providers)) {
+        for (const m of pData.models) {
+          const opt = document.createElement('option');
+          opt.value = `${pId}::${m.id}`;
+          opt.textContent = `${pData.name} — ${m.id}`;
+          select.appendChild(opt);
+        }
+      }
+    }
+
+    function addToWaterfall() {
+      const val = document.getElementById('add-waterfall-select')?.value;
+      if (!val) return;
+      const [pId, mId] = val.split('::');
+      activeWaterfall.push([pId, mId]);
+      renderWaterfallFromActive();
+      showToast(`Added ${mId} to waterfall`);
+    }
+
+    async function saveCustomPriority() {
+      try {
+        await fetch('/api/admin/strategy/custom-priority', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priority: activeWaterfall })
+        });
+        await applyStrategy('custom');
+        showToast('Custom priority hierarchy saved & activated!');
+      } catch (err) {
+        showToast('Save failed: ' + err);
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // OVERVIEW & CHAINS
+    // -----------------------------------------------------------------
+    let collapsedOverviewSet = new Set();
+    let filterKeyedOnlyState = false;
+
+    function toggleProvCard(pId) {
+      if (collapsedOverviewSet.has(pId)) {
+        collapsedOverviewSet.delete(pId);
+      } else {
+        collapsedOverviewSet.add(pId);
+      }
+      const card = document.getElementById(`prov-card-${pId}`);
+      const glyph = document.getElementById(`prov-glyph-${pId}`);
+      if (card && glyph) {
+        if (collapsedOverviewSet.has(pId)) {
+          card.classList.add('collapsed');
+          glyph.innerText = '+';
+        } else {
+          card.classList.remove('collapsed');
+          glyph.innerText = '−';
+        }
+      }
+    }
+
+    function toggleAllProviders(expand) {
+      if (!routerStats || !routerStats.key_pools) return;
+      Object.keys(routerStats.key_pools).forEach(pId => {
+        if (expand) collapsedOverviewSet.delete(pId);
+        else collapsedOverviewSet.add(pId);
+      });
+      renderOverview();
+    }
+
+    function toggleKeyedOnly() {
+      filterKeyedOnlyState = !filterKeyedOnlyState;
+      const btn = document.getElementById('btn-filter-keyed');
+      if (btn) btn.classList.toggle('active', filterKeyedOnlyState);
+      renderOverview();
+    }
+
+    function renderOverview() {
+      if (!routerStats) return;
+
+      document.getElementById('stat-total-requests').innerText = routerStats.total_requests || 0;
+      document.getElementById('stat-success-rate').innerText = (routerStats.overall_success_rate || 100) + '% SLA';
+      document.getElementById('stat-total-tokens').innerText = (routerStats.total_tokens || 0).toLocaleString();
+      document.getElementById('stat-current-rpm').innerHTML = (routerStats.current_rpm || 0) + ' <span style="font-size: 0.9rem; color:var(--text-dim);">RPM</span>';
+      document.getElementById('stat-current-tpm').innerText = (routerStats.current_tpm || 0).toLocaleString() + ' TPM';
+
+      // 1. GLOBAL POOLED CAPACITY HERO CARD
+      const gLimits = routerStats.global_limits || {};
+      const tokensCap = gLimits.total_tokens_capacity || 1250000000;
+      const tokensUsed = routerStats.total_tokens || gLimits.total_tokens_used || 0;
+      const tokenPct = gLimits.tokens_used_pct !== undefined ? gLimits.tokens_used_pct : ((tokensUsed / tokensCap) * 100);
+
+      const elTokenFraction = document.getElementById('global-token-fraction');
+      if (elTokenFraction) elTokenFraction.innerText = `${tokensUsed.toLocaleString()} / ${tokensCap.toLocaleString()} Tokens`;
+
+      const elTokenPct = document.getElementById('global-token-pct');
+      if (elTokenPct) elTokenPct.innerText = `${tokenPct.toFixed(4)}% Used`;
+
+      const elTokenFill = document.getElementById('global-token-fill');
+      if (elTokenFill) {
+        const visualWidth = tokensUsed > 0 ? Math.max(0.6, Math.min(100, tokenPct)) : 0;
+        elTokenFill.style.width = visualWidth + '%';
+      }
+
+      // Daily RPD Bar
+      const rpdCap = gLimits.total_rpd_capacity || 165150;
+      const rpdUsed = routerStats.total_requests || gLimits.total_requests_used || 0;
+      const rpdPct = gLimits.rpd_used_pct !== undefined ? gLimits.rpd_used_pct : ((rpdUsed / rpdCap) * 100);
+
+      const elRpdVal = document.getElementById('global-rpd-val');
+      if (elRpdVal) elRpdVal.innerText = `${rpdUsed.toLocaleString()} / ${rpdCap.toLocaleString()} RPD`;
+
+      const elRpdFill = document.getElementById('global-rpd-fill');
+      if (elRpdFill) elRpdFill.style.width = Math.min(100, Math.max(rpdUsed > 0 ? 0.6 : 0, rpdPct)) + '%';
+
+      const elRpdPct = document.getElementById('global-rpd-pct');
+      if (elRpdPct) elRpdPct.innerText = `${rpdPct.toFixed(1)}%`;
+
+      // RPM Concurrency Bar
+      const rpmCap = gLimits.total_rpm_capacity || 1174;
+      const currentRpm = routerStats.current_rpm || 0;
+      const rpmPct = (currentRpm / rpmCap) * 100;
+
+      const elRpmVal = document.getElementById('global-rpm-val');
+      if (elRpmVal) elRpmVal.innerText = `${currentRpm} / ${rpmCap} RPM`;
+
+      const elRpmFill = document.getElementById('global-rpm-fill');
+      if (elRpmFill) elRpmFill.style.width = Math.min(100, Math.max(currentRpm > 0 ? 1 : 0, rpmPct)) + '%';
+
+      const elRpmPct = document.getElementById('global-rpm-pct');
+      if (elRpmPct) elRpmPct.innerText = `${rpmPct.toFixed(1)}%`;
+
+      // Available Headroom
+      const freeTokens = Math.max(0, tokensCap - tokensUsed);
+      const elHeadroom = document.getElementById('global-headroom-val');
+      if (elHeadroom) {
+        if (freeTokens >= 1000000000) {
+          elHeadroom.innerText = `${(freeTokens / 1000000000).toFixed(2)}B Free`;
+        } else if (freeTokens >= 1000000) {
+          elHeadroom.innerText = `${(freeTokens / 1000000).toFixed(1)}M Free`;
+        } else {
+          elHeadroom.innerText = `${freeTokens.toLocaleString()} Free`;
+        }
+      }
+
+      // 2. PER-PROVIDER ASYMMETRIC MASONRY CARDS (TAKES ONLY REQUIRED SPACE)
+      const keyPools = routerStats.key_pools || {};
+      const provIds = Object.keys(keyPools);
+      let activeCount = 0;
+      let totalKeys = 0;
+
+      const container = document.getElementById('overview-provider-container');
+      container.innerHTML = '';
+
+      provIds.forEach(pId => {
+        const pool = keyPools[pId];
+        const pStats = (routerStats.providers && routerStats.providers[pId]) || {};
+        const isConfigured = pool.total_keys > 0;
+        if (isConfigured) activeCount++;
+        totalKeys += pool.total_keys;
+
+        // Skip unconfigured if filter is active
+        if (filterKeyedOnlyState && !isConfigured) return;
+
+        const pData = (adminModelsData && adminModelsData.providers && adminModelsData.providers[pId]) || null;
+        const displayName = pData ? pData.name : pId.toUpperCase();
+
+        const card = document.createElement('div');
+        const isCollapsed = collapsedOverviewSet.has(pId);
+        card.className = `provider-section-card ${isCollapsed ? 'collapsed' : ''}`;
+        card.id = `prov-card-${pId}`;
+
+        const pBudget = (routerStats.rate_budget && routerStats.rate_budget[pId]) || {};
+        const pRpmUsed = pBudget.current_rpm || 0;
+        const pRpmLimit = pBudget.rpm_limit || (pData && pData.free_tier ? pData.free_tier.rpm : 30);
+        const pRpmPct = pRpmLimit > 0 ? Math.min(100, Math.round((pRpmUsed / pRpmLimit) * 100)) : 0;
+        const rpmFillClass = pRpmPct >= 85 ? 'danger' : (pRpmPct >= 60 ? 'warning' : '');
+        const rpmColor = pRpmPct >= 85 ? '#D97D64' : (pRpmPct >= 60 ? '#D4B996' : '#8FA98F');
+
+        const pRpdUsed = pBudget.current_rpd || pStats.total_requests || 0;
+        const pRpdLimit = pBudget.rpd_limit || (pData && pData.free_tier ? pData.free_tier.rpd : 1000);
+        const pRpdPct = pRpdLimit > 0 ? Math.min(100, Math.round((pRpdUsed / pRpdLimit) * 100)) : 0;
+        const rpdFillClass = pRpdPct >= 85 ? 'danger' : (pRpdPct >= 60 ? 'warning' : '');
+        const rpdColor = pRpdPct >= 85 ? '#D97D64' : (pRpdPct >= 60 ? '#D4B996' : '#8FA98F');
+
+        const pTokensUsed = (pStats.total_tokens || 0).toLocaleString();
+
+        let badgeClass = isConfigured ? (pool.available_keys > 0 ? 'healthy' : 'rate_limited') : 'no_key';
+        let badgeText = isConfigured ? (pool.available_keys > 0 ? `${pool.available_keys} Active` : 'Cooldown') : 'No Key';
+
+        card.innerHTML = `
+          <div class="prov-card-header" onclick="toggleProvCard('${pId}')" title="Click to collapse / expand">
+            <div class="prov-title">
+              <span class="prov-toggle-glyph" id="prov-glyph-${pId}">${isCollapsed ? '+' : '−'}</span>
+              <span>${displayName}</span>
+              <span class="health-pill ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="prov-meta">
+              <span><b>${pStats.total_requests || 0}</b> reqs</span>
+              <span><b>${pStats.avg_latency_ms || 0}ms</b></span>
+            </div>
+          </div>
+
+          <div class="prov-card-body" id="prov-body-${pId}">
+            <div class="prov-limits-block">
+              <div class="prov-limit-row">
+                <div class="prov-limit-meta">
+                  <span>Concurrency</span>
+                  <strong>${pRpmUsed} / ${pRpmLimit} RPM <span style="color:${rpmColor}">(${pRpmPct}%)</span></strong>
+                </div>
+                <div class="quota-bar-track">
+                  <div class="quota-bar-fill ${rpmFillClass}" style="width: ${Math.max(pRpmUsed > 0 ? 3 : 0, pRpmPct)}%;"></div>
+                </div>
+              </div>
+
+              <div class="prov-limit-row">
+                <div class="prov-limit-meta">
+                  <span>Daily Quota</span>
+                  <strong>${pRpdUsed} / ${pRpdLimit.toLocaleString()} RPD <span style="color:${rpdColor}">(${pRpdPct}%)</span></strong>
+                </div>
+                <div class="quota-bar-track">
+                  <div class="quota-bar-fill ${rpdFillClass}" style="width: ${Math.max(pRpdUsed > 0 ? 3 : 0, pRpdPct)}%;"></div>
+                </div>
+              </div>
+
+              <div class="prov-limit-meta" style="margin-top:0.15rem;">
+                <span>Tokens Consumed</span>
+                <strong style="color:var(--warm-sand);">${pTokensUsed}</strong>
+              </div>
+            </div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+              ${pool.keys.length > 0 ? pool.keys.map(k => `
+                <span style="background:#040507; border:1px solid var(--border); padding:0.15rem 0.45rem; margin-right:0.3rem; display:inline-block; margin-bottom:0.25rem;">
+                  ${k.masked_key} <span style="color:${k.available ? 'var(--sage)' : 'var(--warm-sand)'}; font-size:0.68rem;">${k.available ? 'ACTIVE' : 'COOLDOWN'}</span>
+                </span>
+              `).join('') : '<span style="color:#F43F5E;">No key in .env</span>'}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('stat-active-providers').innerText = `${activeCount} / ${provIds.length}`;
+      document.getElementById('stat-total-keys').innerText = `${totalKeys} Keys Active`;
+
+      const elKeysHint = document.getElementById('global-active-keys-hint');
+      if (elKeysHint) elKeysHint.innerText = `${activeCount} / ${provIds.length} Keyed`;
+      
+      const elCountInd = document.getElementById('prov-count-indicator');
+      if (elCountInd) elCountInd.innerText = `${activeCount} Keyed / ${provIds.length} Total`;
+    }
+
+    async function loadChains() {
+      try {
+        const res = await fetch('/api/chains');
+        const chains = await res.json();
+        const container = document.getElementById('chain-container');
+        container.innerHTML = '';
+
+        const selectEl = document.getElementById('play-model');
+        if (selectEl) selectEl.innerHTML = '';
+
+        for (const [aliasId, info] of Object.entries(chains)) {
+          if (selectEl) {
+            const opt = document.createElement('option');
+            opt.value = aliasId;
+            opt.textContent = `${aliasId} (${info.display_name.split('—')[0].trim()})`;
+            if (aliasId === 'mega-pool') opt.selected = true;
+            selectEl.appendChild(opt);
+          }
+
+          const div = document.createElement('div');
+          div.className = 'chain-card';
+
+          const stepsHtml = (info.fallbacks || []).map((step, idx) => {
+            const label = idx === 0 ? 'Primary' : `#${idx + 1}`;
+            return `
+              <span class="arrow">➔</span>
+              <span class="step-pill">
+                <span class="step-prov">${label}:</span> 
+                <span class="step-model">${step.provider_name || step.provider} (${step.model})</span>
+              </span>
+            `;
+          }).join('');
+
+          div.innerHTML = `
+            <div class="chain-alias">${aliasId}</div>
+            <div style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 0.75rem;">${info.display_name}</div>
+            <div class="steps-container">
+              <span class="step-pill" style="border-color: var(--primary);">
+                <span class="step-prov" style="color: var(--primary);">Endpoint:</span> 
+                <span class="step-model">${aliasId}</span>
+              </span>
+              ${stepsHtml}
+            </div>
+          `;
+          container.appendChild(div);
+        }
+      } catch (err) {
+        console.error('Failed to load chains:', err);
+      }
+    }
+
+    async function runPlayground() {
+      const model = document.getElementById('play-model').value;
+      const system = document.getElementById('play-system').value;
+      const prompt = document.getElementById('play-prompt').value;
+      const stream = document.getElementById('play-stream').checked;
+      const btn = document.getElementById('play-submit-btn');
+      const bodyEl = document.getElementById('play-response-body');
+      const routingEl = document.getElementById('play-routing-info');
+      const latencyEl = document.getElementById('play-latency-info');
+
+      btn.disabled = true;
+      bodyEl.innerText = stream ? 'Streaming response...\n' : 'Sending request...';
+      routingEl.innerText = 'Routing: Connecting...';
+      const startT = performance.now();
+
+      try {
+        const keyInput = document.getElementById('play-key');
+        const activeKey = (keyInput && keyInput.value.trim()) ? keyInput.value.trim() : MASTER_KEY;
+
+        const res = await fetch('/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': activeKey,
+          },
+          body: JSON.stringify({
+            model: model,
+            system: system,
+            messages: [{ role: 'user', content: prompt }],
+            stream: stream,
+            max_tokens: 1024
+          })
+        });
+
+        const prov = res.headers.get('X-Routed-Provider') || 'unknown';
+        const m = res.headers.get('X-Routed-Model') || 'unknown';
+        const tier = res.headers.get('X-Router-Tier') || 'GENERAL';
+        routingEl.innerHTML = `Routed: <b style="color:var(--warm-sand);">${prov}/${m}</b> &bull; <span class="status-pill" style="font-size:0.65rem;">${tier}</span>`;
+
+        if (!res.ok) {
+          const errData = await res.json();
+          bodyEl.innerText = 'Error: ' + JSON.stringify(errData, null, 2);
+          btn.disabled = false;
+          return;
+        }
+
+        if (stream) {
+          bodyEl.innerText = '';
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const ev = JSON.parse(line.substring(6));
+                  if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
+                    bodyEl.innerText += ev.delta.text;
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+        } else {
+          const data = await res.json();
+          const text = (data.content && data.content[0] && data.content[0].text) || JSON.stringify(data, null, 2);
+          bodyEl.innerText = text;
+        }
+
+        const elapsed = Math.round(performance.now() - startT);
+        latencyEl.innerText = `Latency: ${elapsed}ms`;
+
+      } catch (err) {
+        bodyEl.innerText = 'Network error: ' + err;
+      } finally {
+        btn.disabled = false;
+        fetchStats();
+      }
+    }
+
+    // Antigravity UI Authentication
+    async function openAntigravityAuthModal() {
+      const modal = document.getElementById('antigravity-auth-modal');
+      modal.style.display = 'flex';
+      try {
+        const res = await fetch('/api/admin/auth/antigravity');
+        const data = await res.json();
+        const input = document.getElementById('ag-token-input');
+        const statusEl = document.getElementById('ag-status-badge');
+        if (data.configured) {
+          statusEl.innerText = `Connected (${data.token_prefix})`;
+          statusEl.style.color = '#10b981';
+          input.placeholder = `Currently configured (${data.token_prefix}). Paste a new key/token below to update.`;
+        } else {
+          statusEl.innerText = 'Not Configured';
+          statusEl.style.color = '#ef4444';
+          input.placeholder = 'Paste your Google Gemini API Key or OAuth Bearer token (ya29...) here...';
+        }
+      } catch (e) {}
+    }
+
+    function closeAntigravityAuthModal() {
+      document.getElementById('antigravity-auth-modal').style.display = 'none';
+    }
+
+    async function saveAntigravityAuth() {
+      const token = document.getElementById('ag-token-input').value.trim();
+      if (!token) {
+        showToast('Please enter a valid key or token');
+        return;
+      }
+      try {
+        const res = await fetch('/api/admin/auth/antigravity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          showToast('Antigravity Auth token activated!');
+          closeAntigravityAuthModal();
+          triggerRecheck();
+        }
+      } catch (e) {
+        showToast('Failed to save Antigravity token');
+      }
+    }
+
+    async function autoDetectAntigravityAuth() {
+      const btn = document.getElementById('ag-autodetect-btn');
+      btn.innerText = 'Scanning...';
+      try {
+        const res = await fetch('/api/admin/auth/antigravity/auto-detect', { method: 'POST' });
+        const data = await res.json();
+        showToast(data.message);
+        if (data.found) {
+          openAntigravityAuthModal();
+          triggerRecheck();
+        }
+      } catch (e) {
+        showToast('Auto-detect error: ' + e);
+      } finally {
+        btn.innerText = 'Auto-Detect Local IDE Token';
+      }
+    }
+
+    // Init & polling
+    fetchConfig();
+    fetchStats();
+    loadAdminModels();
+    loadStrategies();
+    loadChains();
+    setInterval(fetchStats, 5000);
+  </script>
+
+  <!-- ANTIGRAVITY AUTH MODAL -->
+  <div id="antigravity-auth-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(14,17,20,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-card); border:1px solid var(--sage-border); padding:2rem; width:92%; max-width:560px; display:flex; flex-direction:column; gap:1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.15rem; font-weight:700; color:var(--beige); display:flex; align-items:center; gap:0.5rem; font-family:var(--font-mono);">
+          Google Antigravity Authentication
+        </h3>
+        <button onclick="closeAntigravityAuthModal()" style="background:none; border:none; color:var(--slate-muted); font-size:1.25rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:0.825rem; color:var(--slate-muted); line-height:1.5;">
+        Connect your Google credentials to activate high Antigravity limits (<b style="color:var(--warm-sand);">60 RPM / 10,000 RPD</b>) on Gemini 3.8 Flash and Gemini 2.5 Pro without restarting the server.
+      </p>
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-inset); padding:0.6rem 0.85rem; border:1px solid var(--border);">
+        <span style="font-size:0.8rem; color:var(--slate-muted);">Current Status:</span>
+        <span id="ag-status-badge" style="font-size:0.8rem; font-weight:600; color:var(--off-white);">Checking...</span>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <button id="ag-autodetect-btn" class="btn-primary" style="flex:1; padding:0.55rem 0.85rem; font-size:0.8rem;" onclick="autoDetectAntigravityAuth()">
+          Auto-Detect Local IDE Token
+        </button>
+        <a href="https://aistudio.google.com/apikey" target="_blank" class="btn-primary" style="flex:1; padding:0.55rem 0.85rem; font-size:0.8rem; background:rgba(140,155,175,0.08); border:1px solid var(--border); color:var(--warm-sand); text-decoration:none; text-align:center; justify-content:center;">
+          Get Free Google Key ↗
+        </a>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        <label style="font-size:0.775rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--slate-muted); font-family:var(--font-mono);">Google API Key (AIzaSy...) or Bearer Token (ya29...)</label>
+        <textarea id="ag-token-input" placeholder="Paste your Google Gemini API Key or OAuth Bearer token here..." style="background:var(--bg-inset); border:1px solid var(--border); color:var(--off-white); padding:0.6rem; height:90px; resize:vertical; font-family:var(--font-mono); font-size:0.825rem; outline:none;"></textarea>
+      </div>
+      <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+        <button class="btn-micro" style="padding:0.5rem 1rem;" onclick="closeAntigravityAuthModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveAntigravityAuth()">Save &amp; Activate Token</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,1202 @@
+# ==============================================================================
+# LLM Router - Verified Provider Catalog & Free Tier Specifications
+# All model IDs verified against live provider APIs 2026-09-26
+# ==============================================================================
+
+providers:
+  # 1. Google Gemini (Google AI Studio) - Flagship Free Tier (1M Context)
+  gemini:
+    name: "Google AI Studio"
+    type: "gemini"
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    env_keys: ["GEMINI_API_KEYS", "GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GEMINI_KEYS"]
+    docs_url: "https://aistudio.google.com/apikey"
+    free_tier:
+      rpm: 15
+      rpd: 1500
+      tpm: 1000000
+    models:
+      - id: "gemini-3.8-flash"
+        name: "Gemini 3.8 Flash (Flagship Free)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: true
+      - id: "gemini-3.7-flash"
+        name: "Gemini 3.7 Flash (Hybrid Reasoning)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: true
+      - id: "gemini-3.5-flash"
+        name: "Gemini 3.5 Flash (1,500 RPD Free)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: false
+      - id: "gemini-3.5-flash-lite"
+        name: "Gemini 3.5 Flash Lite (Fast Free)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: false
+      - id: "gemini-3.1-flash-lite"
+        name: "Gemini 3.1 Flash Lite (Ultra Fast)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: false
+      - id: "gemma-4-31b-it"
+        name: "Gemma 4 31B (High Quota 14k RPD)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "gemini-flash-latest"
+        name: "Gemini Flash Latest"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+      - id: "gemini-pro-latest"
+        name: "Gemini Pro Latest"
+        context_window: 2097152
+        supports_tools: true
+        supports_vision: true
+
+  # 2. Groq Cloud - Ultra-Fast Inference (~300 tok/s)
+  groq:
+    name: "Groq Cloud"
+    type: "openai_compat"
+    base_url: "https://api.groq.com/openai/v1"
+    env_keys: ["GROQ_API_KEYS", "GROQ_API_KEY", "GROQ_KEYS"]
+    docs_url: "https://console.groq.com/keys"
+    free_tier:
+      rpm: 30
+      rpd: 14400
+      tpm: 6000
+    models:
+      - id: "openai/gpt-oss-120b"
+        name: "GPT-OSS 120B (Groq Fast Reasoning)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen/qwen3.8-27b"
+        name: "Qwen 3.8 27B (Groq)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "openai/gpt-oss-20b"
+        name: "GPT-OSS 20B (Groq Instant)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "llama-3.3-70b-versatile"
+        name: "Llama 3.3 70B Versatile (Groq 1,000 RPD)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "llama-4-scout-17b-16e-instruct"
+        name: "Llama 4 Scout (Groq Fast)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+
+  # 3. GitHub Models - Free OpenAI GPT-4o & Meta Llama
+  github:
+    name: "GitHub Models"
+    type: "openai_compat"
+    base_url: "https://models.github.ai/inference"
+    env_keys: ["GITHUB_TOKENS", "GITHUB_TOKEN", "GITHUB_PAT", "GITHUB_KEYS"]
+    docs_url: "https://github.com/marketplace/models"
+    free_tier:
+      rpm: 15
+      rpd: 150
+      tpm: 8000
+    models:
+      - id: "openai/gpt-5"
+        name: "OpenAI GPT-5 (GitHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "gpt-4o"
+        name: "OpenAI GPT-4o (GitHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "gpt-4o-mini"
+        name: "OpenAI GPT-4o-mini (GitHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "meta-llama-3.3-70b-instruct"
+        name: "Llama 3.3 70B (GitHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "DeepSeek-V3"
+        name: "DeepSeek V3 (GitHub)"
+        context_window: 65536
+        supports_tools: true
+        supports_vision: false
+
+  # 4. Cerebras Cloud - Fastest Inference (~2,000 tok/s)
+  cerebras:
+    name: "Cerebras Cloud"
+    type: "openai_compat"
+    base_url: "https://api.cerebras.ai/v1"
+    env_keys: ["CEREBRAS_API_KEYS", "CEREBRAS_API_KEY", "CEREBRAS_KEYS"]
+    docs_url: "https://cloud.cerebras.ai/"
+    free_tier:
+      rpm: 30
+      rpd: 14400
+      tpm: 60000
+    models:
+      - id: "gpt-oss-120b"
+        name: "GPT-OSS 120B (Cerebras Ultra-Fast)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen-3.8-27b"
+        name: "Qwen 3.8 27B (Cerebras)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 5. Mistral AI - Codestral & Mistral Small
+  mistral:
+    name: "Mistral AI"
+    type: "openai_compat"
+    base_url: "https://api.mistral.ai/v1"
+    env_keys: ["MISTRAL_API_KEYS", "MISTRAL_API_KEY", "MISTRAL_KEYS"]
+    docs_url: "https://console.mistral.ai/"
+    free_tier:
+      rpm: 30
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "codestral-latest"
+        name: "Codestral Latest (Flagship Code)"
+        context_window: 256000
+        supports_tools: true
+        supports_vision: false
+      - id: "mistral-small-latest"
+        name: "Mistral Small Latest"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "mistral-code-latest"
+        name: "Mistral Code Latest"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 6. OpenRouter Free Pool - Aggregator with :free models
+  openrouter:
+    name: "OpenRouter Free Pool"
+    type: "openai_compat"
+    base_url: "https://openrouter.ai/api/v1"
+    env_keys: ["OPENROUTER_API_KEYS", "OPENROUTER_API_KEY", "OPENROUTER_KEYS"]
+    docs_url: "https://openrouter.ai/keys"
+    free_tier:
+      rpm: 20
+      rpd: 50
+      tpm: 40000
+    models:
+      - id: "deepseek/deepseek-v3.1:free"
+        name: "DeepSeek V3.1 Free (OpenRouter)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen/qwen3-coder:free"
+        name: "Qwen 3 Coder Free (OpenRouter)"
+        context_window: 262144
+        supports_tools: true
+        supports_vision: false
+      - id: "moonshotai/kimi-k2:free"
+        name: "Kimi K2 Free (OpenRouter)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "z-ai/glm-4.5-air:free"
+        name: "GLM-4.5 Air Free (OpenRouter)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen/qwen3.8-27b:free"
+        name: "Qwen 3.8 27B (OpenRouter Free)"
+        context_window: 262144
+        supports_tools: true
+        supports_vision: false
+      - id: "nvidia/nemotron-3-super-120b-a12b:free"
+        name: "Nemotron 3 Super 120B (Free)"
+        context_window: 262144
+        supports_tools: true
+        supports_vision: false
+      - id: "nvidia/nemotron-3.5-lightning:free"
+        name: "Nemotron 3.5 Lightning (Free)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "google/gemma-4-31b-it:free"
+        name: "Gemma 4 31B (Free)"
+        context_window: 262144
+        supports_tools: true
+        supports_vision: false
+
+  # 7. NVIDIA NIM (build.nvidia.com) - 1,000 Free Credits
+  nvidia:
+    name: "NVIDIA NIM"
+    type: "openai_compat"
+    base_url: "https://integrate.api.nvidia.com/v1"
+    env_keys: ["NVIDIA_API_KEYS", "NVIDIA_API_KEY", "NVIDIA_KEY", "NVIDIA_NIM_KEY"]
+    docs_url: "https://build.nvidia.com/"
+    free_tier:
+      rpm: 40
+      rpd: 1000
+      tpm: 500000
+    models:
+      - id: "deepseek-ai/deepseek-v4.1-flash"
+        name: "DeepSeek V4.1 Flash (NVIDIA)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "meta/llama-3.3-70b-instruct"
+        name: "Llama 3.3 70B (NVIDIA)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "google/gemma-3-12b-it"
+        name: "Gemma 3 12B (NVIDIA)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 8. Hugging Face Serverless API
+  huggingface:
+    name: "Hugging Face"
+    type: "openai_compat"
+    base_url: "https://router.huggingface.co/hf-inference/v1"
+    env_keys: ["HUGGINGFACE_API_KEYS", "HUGGINGFACE_API_KEY", "HF_TOKEN", "HUGGINGFACE_KEY"]
+    docs_url: "https://huggingface.co/settings/tokens"
+    free_tier:
+      rpm: 20
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "Qwen/Qwen2.5-Coder-32B-Instruct"
+        name: "Qwen 2.5 Coder 32B (HF)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "meta-llama/Llama-3.3-70B-Instruct"
+        name: "Llama 3.3 70B (HuggingFace)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 9. SambaNova Cloud - Fast Inference
+  sambanova:
+    name: "SambaNova Cloud"
+    type: "openai_compat"
+    base_url: "https://api.sambanova.ai/v1"
+    env_keys: ["SAMBANOVA_API_KEYS", "SAMBANOVA_API_KEY", "SAMBANOVA_KEY"]
+    docs_url: "https://cloud.sambanova.ai/"
+    free_tier:
+      rpm: 30
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "gpt-oss-120b"
+        name: "GPT-OSS 120B (SambaNova)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "Meta-Llama-3.3-70B-Instruct"
+        name: "Llama 3.3 70B (SambaNova)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "DeepSeek-V3.1"
+        name: "DeepSeek V3.1 (SambaNova)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+
+  # 10. Together AI
+  together:
+    name: "Together AI"
+    type: "openai_compat"
+    base_url: "https://api.together.xyz/v1"
+    env_keys: ["TOGETHER_API_KEYS", "TOGETHER_API_KEY", "TOGETHER_KEY"]
+    docs_url: "https://api.together.xyz/settings/api-keys"
+    free_tier:
+      rpm: 60
+      rpd: 2000
+      tpm: 200000
+    models:
+      - id: "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+        name: "Llama 3.3 70B Turbo (Together)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "Qwen/Qwen2.5-Coder-32B-Instruct"
+        name: "Qwen 2.5 Coder 32B (Together)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+
+  # 11. DeepSeek Direct
+  deepseek:
+    name: "DeepSeek"
+    type: "openai_compat"
+    base_url: "https://api.deepseek.com/v1"
+    env_keys: ["DEEPSEEK_API_KEYS", "DEEPSEEK_API_KEY", "DEEPSEEK_KEY"]
+    docs_url: "https://platform.deepseek.com/api_keys"
+    free_tier:
+      rpm: 60
+      rpd: 5000
+      tpm: 1000000
+    models:
+      - id: "deepseek-chat"
+        name: "DeepSeek-V3"
+        context_window: 64000
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-reasoner"
+        name: "DeepSeek-R1"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+
+  # 12. Cohere - Command R Models
+  cohere:
+    name: "Cohere"
+    type: "openai_compat"
+    base_url: "https://api.cohere.ai/compatibility/v1"
+    env_keys: ["COHERE_API_KEYS", "COHERE_API_KEY", "COHERE_KEY"]
+    docs_url: "https://dashboard.cohere.com/api-keys"
+    free_tier:
+      rpm: 20
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "command-r-plus-08-2024"
+        name: "Command R+ (Cohere Best)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "command-r-08-2024"
+        name: "Command R (Cohere Fast)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "command-a-plus"
+        name: "Command A+ (Cohere Trial)"
+        context_window: 256000
+        supports_tools: true
+        supports_vision: false
+      - id: "north-mini-code"
+        name: "North Mini Code (Cohere Code Trial)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+
+  # 13. Google Antigravity (Local IDE & SDK Proxy / OAuth)
+  antigravity:
+    name: "Google Antigravity"
+    type: "antigravity"
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    env_keys: ["ANTIGRAVITY_API_KEYS", "ANTIGRAVITY_API_KEY", "AGY_TOKEN", "GOOGLE_GEMINI_KEYS", "GEMINI_API_KEYS", "GEMINI_API_KEY"]
+    docs_url: "https://antigravity.google/docs"
+    free_tier:
+      rpm: 60
+      rpd: 10000
+      tpm: 2000000
+    models:
+      - id: "gemini-3.8-flash"
+        name: "Antigravity Gemini 3.8 Flash (High Quota 10k RPD)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: true
+      - id: "gemini-2.5-pro"
+        name: "Antigravity Gemini 2.5 Pro (Deep Reasoning)"
+        context_window: 2097152
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: true
+      - id: "gemini-3.5-flash-lite"
+        name: "Antigravity Gemini 3.5 Flash Lite (Fast Free)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+        supports_thinking: true
+      - id: "gemma-4-31b-it"
+        name: "Antigravity Gemma 4 31B"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+        supports_thinking: false
+
+  # 14. Pollinations.ai (Free Unlimited / Keyless Inference)
+  pollinations:
+    name: "Pollinations.ai"
+    type: "openai_compat"
+    base_url: "https://text.pollinations.ai"
+    env_keys: ["POLLINATIONS_API_KEYS", "POLLINATIONS_API_KEY", "POLLINATIONS_KEY"]
+    docs_url: "https://pollinations.ai"
+    free_tier:
+      rpm: 60
+      rpd: 20000
+      tpm: 500000
+    models:
+      - id: "openai"
+        name: "GPT-4o Mini (Pollinations Free)"
+        context_window: 128000
+        supports_tools: false
+        supports_vision: true
+      - id: "qwen"
+        name: "Qwen 2.5 72B (Pollinations Free)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+      - id: "mistral"
+        name: "Mistral Nemo (Pollinations Free)"
+        context_window: 128000
+        supports_tools: false
+        supports_vision: false
+
+  # 15. ModelScope (Alibaba Community Free LLMs)
+  modelscope:
+    name: "ModelScope"
+    type: "openai_compat"
+    base_url: "https://api-inference.modelscope.cn/v1"
+    env_keys: ["MODELSCOPE_API_KEYS", "MODELSCOPE_API_KEY", "MODELSCOPE_KEY"]
+    docs_url: "https://modelscope.cn"
+    free_tier:
+      rpm: 30
+      rpd: 10000
+      tpm: 300000
+    models:
+      - id: "Qwen/Qwen2.5-72B-Instruct"
+        name: "Qwen 2.5 72B (ModelScope Free)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "Qwen/Qwen2.5-Coder-32B-Instruct"
+        name: "Qwen 2.5 Coder 32B (ModelScope Free)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "MiniMax-M3"
+        name: "MiniMax M3 (ModelScope 100 RPD)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-5.2"
+        name: "GLM-5.2 (ModelScope 100 RPD)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+
+  # 16. AI Horde (Crowdsourced Distributed GPU Inference)
+  aihorde:
+    name: "AI Horde"
+    type: "openai_compat"
+    base_url: "https://oai.aihorde.net/v1"
+    env_keys: ["AIHORDE_API_KEYS", "AIHORDE_API_KEY", "AIHORDE_KEY"]
+    docs_url: "https://aihorde.net"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 100000
+    models:
+      - id: "llama-3-70b"
+        name: "Llama 3 70B (AI Horde Community)"
+        context_window: 8192
+        supports_tools: false
+        supports_vision: false
+
+  # 17. Cloudflare Workers AI
+  cloudflare:
+    name: "Cloudflare Workers AI"
+    type: "openai_compat"
+    base_url: "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1"
+    env_keys: ["CLOUDFLARE_API_KEYS", "CLOUDFLARE_API_KEY", "CLOUDFLARE_TOKEN"]
+    docs_url: "https://developers.cloudflare.com/workers-ai/"
+    free_tier:
+      rpm: 60
+      rpd: 10000
+      tpm: 100000
+    models:
+      - id: "@cf/meta/llama-3.3-70b-instruct"
+        name: "Llama 3.3 70B (Cloudflare Workers AI)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b"
+        name: "DeepSeek R1 32B (Cloudflare Workers AI)"
+        context_window: 131072
+        supports_tools: false
+        supports_vision: false
+      - id: "@cf/qwen/qwen2.5-coder-32b-instruct"
+        name: "Qwen 2.5 Coder 32B (Cloudflare Workers AI)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+
+  # 18. AMD Radeon Cloud
+  radeon:
+    name: "AMD Radeon Cloud"
+    type: "openai_compat"
+    base_url: "https://developer.amd.com.cn/radeon/api/v1"
+    env_keys: ["AMD_API_KEYS", "AMD_API_KEY", "RADEON_API_KEYS", "RADEON_API_KEY"]
+    docs_url: "https://cloud.amd.com/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 200000
+    models:
+      - id: "deepseek-ai/deepseek-v4"
+        name: "DeepSeek V4 (AMD Radeon Cloud)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen/qwen-3.8-27b"
+        name: "Qwen 3.8 27B (AMD Radeon Cloud)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "google/gemma-4-31b-it"
+        name: "Gemma 4 31B (AMD Radeon Cloud)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+
+  # 19. LLM7 Gateway
+  llm7:
+    name: "LLM7 Gateway"
+    type: "openai_compat"
+    base_url: "https://api.llm7.io/v1"
+    env_keys: ["LLM7_API_KEYS", "LLM7_API_KEY", "LLM7_KEY"]
+    docs_url: "https://llm7.io/"
+    free_tier:
+      rpm: 120
+      rpd: 10000
+      tpm: 500000
+    models:
+      - id: "gpt-4o-mini"
+        name: "GPT-4o Mini (LLM7)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "claude-haiku-5-5"
+        name: "Claude Haiku 5.5 (LLM7)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "claude-sonnet-4-6"
+        name: "Claude Sonnet 4.6 (LLM7)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "claude-sonnet-5"
+        name: "Claude Sonnet 5 (LLM7)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "gemini-3.8-flash-high"
+        name: "Gemini 3.8 Flash High (LLM7)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: true
+      - id: "deepseek-chat"
+        name: "DeepSeek V3 (LLM7)"
+        context_window: 64000
+        supports_tools: true
+        supports_vision: false
+      - id: "codestral-latest"
+        name: "Codestral Latest (LLM7)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 20. Kilo Gateway
+  kilo:
+    name: "Kilo Gateway"
+    type: "openai_compat"
+    base_url: "https://api.kilo.ai/v1"
+    env_keys: ["KILO_API_KEYS", "KILO_API_KEY", "KILO_KEY"]
+    docs_url: "https://kilo.ai/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 250000
+    models:
+      - id: "kilo-auto/free"
+        name: "Kilo Auto Free (Kilo)"
+        context_window: 256000
+        supports_tools: true
+        supports_vision: true
+      - id: "deepseek/deepseek-r1:free"
+        name: "DeepSeek R1 Free (Kilo)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+      - id: "qwen/qwen-2.5-coder-32b:free"
+        name: "Qwen 2.5 Coder 32B Free (Kilo)"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+
+  # 21. Zhipu AI / Z.ai
+  zhipu:
+    name: "Zhipu AI (Z.ai)"
+    type: "openai_compat"
+    base_url: "https://open.bigmodel.cn/api/paas/v4"
+    env_keys: ["ZAI_API_KEYS", "ZAI_API_KEY", "ZHIPU_API_KEYS", "ZHIPU_API_KEY", "BIGMODEL_API_KEY"]
+    docs_url: "https://open.bigmodel.cn/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 200000
+    models:
+      - id: "glm-4-flash"
+        name: "GLM-4 Flash (Zhipu Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-4.7-flash"
+        name: "GLM-4.7 Flash (Zhipu Free)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-5.2"
+        name: "GLM-5.2 (Zhipu Free)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-5.3"
+        name: "GLM-5.3 (Zhipu Free)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-4v-flash"
+        name: "GLM-4V Flash (Zhipu Vision Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+
+  # 22. ElectronHub
+  electronhub:
+    name: "ElectronHub"
+    type: "openai_compat"
+    base_url: "https://api.electronhub.ai/v1"
+    env_keys: ["ELECTRONHUB_API_KEYS", "ELECTRONHUB_API_KEY"]
+    docs_url: "https://electronhub.ai/"
+    free_tier:
+      rpm: 7
+      rpd: 10000
+      tpm: 100000
+    models:
+      - id: "gpt-4o-mini"
+        name: "GPT-4o Mini (ElectronHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "gpt-5.4-mini"
+        name: "GPT 5.4 Mini (ElectronHub 400K)"
+        context_window: 400000
+        supports_tools: true
+        supports_vision: false
+      - id: "o4-mini"
+        name: "O4 Mini (ElectronHub)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "claude-3-5-haiku"
+        name: "Claude 3.5 Haiku (ElectronHub)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+
+  # 23. Septor Labs
+  septor:
+    name: "Septor Labs"
+    type: "openai_compat"
+    base_url: "https://api.septorlabs.com/v1"
+    env_keys: ["SEPTOR_API_KEYS", "SEPTOR_API_KEY"]
+    docs_url: "https://septorlabs.com/"
+    free_tier:
+      rpm: 10
+      rpd: 50
+      tpm: 500000
+    models:
+      - id: "claude-3.5-sonnet"
+        name: "Claude 3.5 Sonnet (Septor Labs)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: true
+      - id: "claude-fable-5.1"
+        name: "Claude Fable 5.1 (Septor 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: true
+      - id: "gpt-6-astra"
+        name: "GPT-6 Astra (Septor 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: true
+      - id: "muse-spark"
+        name: "Muse Spark (Septor 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-r1"
+        name: "DeepSeek R1 (Septor Labs)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+      - id: "glm-5.3"
+        name: "GLM-5.3 (Septor Labs)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: false
+
+  # 24. Router9
+  router9:
+    name: "Router9"
+    type: "openai_compat"
+    base_url: "https://api.router9.com/v1"
+    env_keys: ["ROUTER9_API_KEYS", "ROUTER9_API_KEY"]
+    docs_url: "https://router9.com/"
+    free_tier:
+      rpm: 20
+      rpd: 2000
+      tpm: 200000
+    models:
+      - id: "deepseek-v4-pro"
+        name: "DeepSeek V4 Pro (Router9)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "claude-3-5-sonnet"
+        name: "Claude 3.5 Sonnet (Router9)"
+        context_window: 200000
+        supports_tools: true
+        supports_vision: true
+      - id: "claude-opus"
+        name: "Claude Opus (Router9 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: true
+
+  # 25. Requesty
+  requesty:
+    name: "Requesty"
+    type: "openai_compat"
+    base_url: "https://router.requesty.ai/v1"
+    env_keys: ["REQUESTY_API_KEYS", "REQUESTY_API_KEY"]
+    docs_url: "https://requesty.ai/"
+    free_tier:
+      rpm: 20
+      rpd: 200
+      tpm: 100000
+    models:
+      - id: "nvidia/nemotron-3.5-lightning"
+        name: "Nemotron 3.5 Lightning (Requesty)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "google/gemma-2-9b"
+        name: "Gemma 2 9B (Requesty)"
+        context_window: 8192
+        supports_tools: false
+        supports_vision: false
+
+  # 26. Routeway
+  routeway:
+    name: "Routeway"
+    type: "openai_compat"
+    base_url: "https://api.routeway.ai/v1"
+    env_keys: ["ROUTEWAY_API_KEYS", "ROUTEWAY_API_KEY"]
+    docs_url: "https://routeway.ai/"
+    free_tier:
+      rpm: 20
+      rpd: 200
+      tpm: 100000
+    models:
+      - id: "meta-llama/llama-3.3-70b-instruct:free"
+        name: "Llama 3.3 70B Free (Routeway)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek/deepseek-r1:free"
+        name: "DeepSeek R1 Free (Routeway)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+
+  # 27. UnoRouter
+  unorouter:
+    name: "UnoRouter"
+    type: "openai_compat"
+    base_url: "https://api.unorouter.com/v1"
+    env_keys: ["UNOROUTER_API_KEYS", "UNOROUTER_API_KEY"]
+    docs_url: "https://unorouter.com/"
+    free_tier:
+      rpm: 10
+      rpd: 200
+      tpm: 50000
+    models:
+      - id: "glm-4-flash:free"
+        name: "GLM-4 Flash Free (UnoRouter)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-5.3"
+        name: "GLM-5.3 (UnoRouter 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-r1:free"
+        name: "DeepSeek R1 Free (UnoRouter)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+
+  # 28. BazaarLink
+  bazaarlink:
+    name: "BazaarLink"
+    type: "openai_compat"
+    base_url: "https://api.bazaarlink.ai/v1"
+    env_keys: ["BAZAARLINK_API_KEYS", "BAZAARLINK_API_KEY"]
+    docs_url: "https://bazaarlink.ai/"
+    free_tier:
+      rpm: 15
+      rpd: 120
+      tpm: 100000
+    models:
+      - id: "auto:free"
+        name: "Auto Free (BazaarLink)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-chat"
+        name: "DeepSeek Chat (BazaarLink)"
+        context_window: 64000
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-v3"
+        name: "DeepSeek V3 (BazaarLink 1M)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen-2.5-72b"
+        name: "Qwen 2.5 72B (BazaarLink 1M)"
+        context_window: 1048576
+        supports_tools: true
+        supports_vision: false
+
+  # 29. OVHcloud AI Endpoints
+  ovh:
+    name: "OVHcloud AI Endpoints"
+    type: "openai_compat"
+    base_url: "https://endpoints.ai.cloud.ovh.net/v1"
+    env_keys: ["OVH_API_KEYS", "OVH_API_KEY"]
+    docs_url: "https://endpoints.ai.cloud.ovh.net/"
+    free_tier:
+      rpm: 2
+      rpd: 2880
+      tpm: 50000
+    models:
+      - id: "qwen-3.5-397b"
+        name: "Qwen 3.5 397B (OVH Cloud)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "gpt-oss-120b"
+        name: "GPT-OSS 120B (OVH Cloud)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 30. Ollama Cloud
+  ollama:
+    name: "Ollama Cloud"
+    type: "openai_compat"
+    base_url: "https://ollama.com/api"
+    env_keys: ["OLLAMA_API_KEYS", "OLLAMA_API_KEY"]
+    docs_url: "https://ollama.com/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 250000
+    models:
+      - id: "nemotron-3-ultra"
+        name: "Nemotron 3 Ultra (Ollama Cloud)"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "gpt-oss-120b"
+        name: "GPT-OSS 120B (Ollama Cloud)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 31. Agnes AI
+  agnes:
+    name: "Agnes AI"
+    type: "openai_compat"
+    base_url: "https://api.agnes-ai.com/v1"
+    env_keys: ["AGNES_API_KEYS", "AGNES_API_KEY"]
+    docs_url: "https://platform.agnes-ai.com/"
+    free_tier:
+      rpm: 20
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "agnes-3.0-flash"
+        name: "Agnes 3.0 Flash"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: true
+      - id: "agnes-2.5-flash"
+        name: "Agnes 2.5 Flash"
+        context_window: 500000
+        supports_tools: true
+        supports_vision: false
+
+  # 32. Aion Labs
+  aion:
+    name: "Aion Labs"
+    type: "openai_compat"
+    base_url: "https://api.aionlabs.ai/v1"
+    env_keys: ["AION_API_KEYS", "AION_API_KEY"]
+    docs_url: "https://aionlabs.ai/"
+    free_tier:
+      rpm: 20
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "aion-3.0"
+        name: "Aion 3.0"
+        context_window: 131072
+        supports_tools: true
+        supports_vision: false
+      - id: "aion-2.0"
+        name: "Aion 2.0"
+        context_window: 64000
+        supports_tools: true
+        supports_vision: false
+
+  # 33. NaraRouter
+  nara:
+    name: "NaraRouter"
+    type: "openai_compat"
+    base_url: "https://router.bynara.id/v1"
+    env_keys: ["NARA_API_KEYS", "NARA_API_KEY"]
+    docs_url: "https://router.bynara.id/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 5000000
+    models:
+      - id: "laguna-s-2.1"
+        name: "Laguna S 2.1 (NaraRouter)"
+        context_window: 262144
+        supports_tools: true
+        supports_vision: false
+      - id: "deepseek-r1"
+        name: "DeepSeek R1 (NaraRouter)"
+        context_window: 64000
+        supports_tools: false
+        supports_vision: false
+
+  # 34. Sail Research
+  sail:
+    name: "Sail Research"
+    type: "openai_compat"
+    base_url: "https://api.sailresearch.com/v1"
+    env_keys: ["SAIL_API_KEYS", "SAIL_API_KEY"]
+    docs_url: "https://sailresearch.com/"
+    free_tier:
+      rpm: 20
+      rpd: 1000
+      tpm: 100000
+    models:
+      - id: "glm-4-plus"
+        name: "GLM-4 Plus (Sail Research)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "glm-5.3"
+        name: "GLM-5.3 (Sail Research 1M)"
+        context_window: 1000000
+        supports_tools: true
+        supports_vision: false
+      - id: "gpt-oss-120b"
+        name: "GPT-OSS 120B (Sail Research)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 35. SEA-LION
+  sealion:
+    name: "SEA-LION"
+    type: "openai_compat"
+    base_url: "https://api.sea-lion.ai/v1"
+    env_keys: ["SEALION_API_KEYS", "SEALION_API_KEY"]
+    docs_url: "https://sea-lion.ai/"
+    free_tier:
+      rpm: 10
+      rpd: 1000
+      tpm: 50000
+    models:
+      - id: "sea-lion-v4-32b"
+        name: "SEA-LION v4 32B"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "sea-lion-v4.5-27b"
+        name: "SEA-LION v4.5 27B"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen-sea-lion-v4-32b"
+        name: "Qwen SEA-LION v4 32B"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen-sea-lion-v4.5-27b"
+        name: "Qwen SEA-LION v4.5 27B"
+        context_window: 32768
+        supports_tools: true
+        supports_vision: false
+
+  # 36. xKiro
+  xkiro:
+    name: "xKiro"
+    type: "openai_compat"
+    base_url: "https://api.xkiro.com/v1"
+    env_keys: ["XKIRO_API_KEYS", "XKIRO_API_KEY"]
+    docs_url: "https://xkiro.com/"
+    free_tier:
+      rpm: 30
+      rpd: 5000
+      tpm: 5000000
+    models:
+      - id: "mistral-medium-3.5:free"
+        name: "Mistral Medium 3.5 Free (xKiro)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "minimax-m3:free"
+        name: "MiniMax M3 Free (xKiro)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 37. Api.Airforce
+  airforce:
+    name: "Api.Airforce"
+    type: "openai_compat"
+    base_url: "https://api.airforce/v1"
+    env_keys: ["AIRFORCE_API_KEYS", "AIRFORCE_API_KEY"]
+    docs_url: "https://api.airforce/"
+    free_tier:
+      rpm: 60
+      rpd: 5000
+      tpm: 250000
+    models:
+      - id: "chatgpt-4o-latest"
+        name: "ChatGPT 4o Latest (Airforce Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "llama-3.3-70b"
+        name: "Llama 3.3 70B (Airforce Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "qwen-2.5-72b"
+        name: "Qwen 2.5 72B (Airforce Free)"
+        context_window: 64000
+        supports_tools: true
+        supports_vision: false
+
+  # 38. Lucidity Composite
+  lucidity:
+    name: "Lucidity Composite"
+    type: "openai_compat"
+    base_url: "https://composite.lucidity.sh/v1"
+    env_keys: ["LUCIDITY_API_KEYS", "LUCIDITY_API_KEY"]
+    docs_url: "https://composite.lucidity.sh/"
+    free_tier:
+      rpm: 30
+      rpd: 3000
+      tpm: 150000
+    models:
+      - id: "synth-2.5-preview"
+        name: "Synth 2.5 Preview (Lucidity)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "meta-llama/llama-3.3-70b-instruct:free"
+        name: "Llama 3.3 70B Free (Lucidity)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+
+  # 39. APInex (10M Free Tokens/Day)
+  apinex:
+    name: "APInex"
+    type: "openai_compat"
+    base_url: "https://api.apinex.bond/v1"
+    env_keys: ["APINEX_API_KEY", "APINEX_API_KEYS"]
+    docs_url: "https://apinex.bond/"
+    free_tier:
+      rpm: 5
+      rpd: 5000
+      tpm: 500000
+    models:
+      - id: "free/deepseek-v4-pro-0813"
+        name: "DeepSeek V4 Pro (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/qwen-3.8-max"
+        name: "Qwen 3.8 Max (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/deepseek-v4.1-flash"
+        name: "DeepSeek V4.1 Flash (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/deepseek-v4-flash-0731"
+        name: "DeepSeek V4 Flash (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/gemini-3.8-flash"
+        name: "Gemini 3.8 Flash (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: true
+      - id: "free/gpt-6-luna"
+        name: "GPT-6 Luna (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/glm-5.3-flash"
+        name: "GLM 5.3 Flash (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+      - id: "free/mimo-v2.6-pro"
+        name: "Mimo V2.6 Pro (APInex Free)"
+        context_window: 128000
+        supports_tools: true
+        supports_vision: false
+

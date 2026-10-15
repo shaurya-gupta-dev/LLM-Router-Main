@@ -1,0 +1,44 @@
+# ==============================================================================
+# LLM Router - Docker Compose Orchestration
+# Usage:
+#   1. cp .env.example .env && nano .env (add your free provider keys)
+#   2. docker compose up -d
+#   3. Access dashboard at http://localhost:8080
+# ==============================================================================
+
+services:
+  llm-router:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: llm-router:latest
+    container_name: llm-router
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - ROUTER_HOST=0.0.0.0
+      - ROUTER_PORT=8080
+      - ROUTER_STATE_FILE=/app/data/state.json
+    volumes:
+      # Mount configuration directory to allow real-time model & tier edits
+      - ./config:/app/config:ro
+      # Persist state (model toggles, disabled caches, presets)
+      - router-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  router-data:
+    name: llm-router-data

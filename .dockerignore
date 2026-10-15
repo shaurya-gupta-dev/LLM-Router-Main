@@ -1,0 +1,50 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Environment files and credentials
+.env
+*.pid
+router.pid
+router.log
+state.json
+
+# Python artifacts
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing & Scratchpads
+tests/
+scratch/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Windows startup/daemon scripts (unneeded in Linux containers)
+*.bat
+*.ps1
+*.vbs
+
+# Legacy or submodules
+freellmapi-main/
