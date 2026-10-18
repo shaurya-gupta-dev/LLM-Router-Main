@@ -32,6 +32,7 @@ venv.bak/
 
 # Environment Variables & Secrets
 
+.env
 
 
 # Database & Logs
