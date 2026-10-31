@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import yaml
@@ -45,6 +46,7 @@ class FallbackStep(BaseModel):
 class ModelAliasConfig(BaseModel):
     display_name: str
     fallbacks: List[FallbackStep] = Field(default_factory=list)
+    system_prompt: Optional[str] = None
 
 
 class RoutingSettings(BaseModel):
@@ -132,13 +134,47 @@ class RouterConfig:
             self.models[alias] = ModelAliasConfig(**raw)
 
     def get_provider_keys(self, provider_id: str) -> List[str]:
-        """Extract all configured keys for a provider from env variables."""
+        """
+        Extract all configured keys for a provider from env variables.
+        Supports:
+        - Exact env_keys from providers.yaml
+        - Canonical provider patterns ({PROVIDER}_API_KEY, {PROVIDER}_KEYS, {PROVIDER}_TOKEN, etc.)
+        - Numbered suffixes (e.g. GEMINI_API_KEY_1, GEMINI_API_KEY_2, GROQ_API_KEY_1)
+        - Multi-delimiter parsing: comma (,), semicolon (;), and newlines (\\n)
+        """
         prov = self.providers.get(provider_id)
         if not prov:
             return []
 
+        p_upper = provider_id.upper()
+        base_patterns = set([k.upper() for k in prov.env_keys] + [
+            f"{p_upper}_API_KEY",
+            f"{p_upper}_API_KEYS",
+            f"{p_upper}_KEY",
+            f"{p_upper}_KEYS",
+            f"{p_upper}_TOKEN",
+            f"{p_upper}_TOKENS",
+        ])
+
+        # Scan combined env sources: self.env_cache and os.environ
+        all_env_vars = set(self.env_cache.keys()) | set(os.environ.keys())
+
+        matched_vars: List[str] = []
+        for var in all_env_vars:
+            vu = var.upper()
+            for b in base_patterns:
+                if vu == b or re.match(rf"^{b}(?:_\d+|\d+)$", vu):
+                    matched_vars.append(var)
+                    break
+
+        # Natural sort so KEY_1 comes before KEY_2, KEY_10, etc.
+        def natural_sort_key(s: str):
+            return [int(text) if text.isdigit() else text.lower() for text in re.split(r"(\d+)", s)]
+
+        matched_vars.sort(key=natural_sort_key)
+
         keys: List[str] = []
-        for env_var in prov.env_keys:
+        for env_var in matched_vars:
             ev_upper = env_var.upper()
             val = (
                 self.env_cache.get(ev_upper, "")
@@ -152,10 +188,11 @@ class RouterConfig:
                 val = str(val).strip()
 
             if val:
-                for k in val.split(","):
-                    clean = k.strip().strip("'\"")
+                for token in re.split(r"[,;\n\r]+", val):
+                    clean = token.strip().strip("'\"").strip()
                     if clean and clean not in keys:
                         keys.append(clean)
+
         return keys
 
 

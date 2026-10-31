@@ -92,13 +92,6 @@ app.include_router(health_router)
 app.include_router(admin_router)
 
 
-from fastapi.staticfiles import StaticFiles
-
-FREELLM_DIST = Path(__file__).resolve().parent.parent / "freellmapi-main" / "client" / "dist"
-if FREELLM_DIST.exists():
-    app.mount("/portal", StaticFiles(directory=str(FREELLM_DIST), html=True), name="portal")
-
-
 # Root Health Check endpoints
 @app.api_route("/health", methods=["GET", "HEAD"])
 @app.api_route("/hello", methods=["GET", "HEAD"])
@@ -113,5 +106,12 @@ async def dashboard_home():
     template_path = TEMPLATES_DIR / "index.html"
     if template_path.exists():
         with open(template_path, "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
+            return HTMLResponse(
+                content=f.read(),
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                    "Pragma": "no-cache",
+                    "Expires": "0",
+                },
+            )
     return HTMLResponse("<h1>LLM Router Operational</h1><p>Dashboard template not found.</p>")

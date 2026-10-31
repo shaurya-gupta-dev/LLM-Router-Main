@@ -44,16 +44,42 @@ def get_local_antigravity_token() -> Optional[str]:
             with open(creds_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             expiry_date = data.get("expiry_date")
+            token_valid = True
             if expiry_date:
                 now_ms = time.time() * 1000
                 if now_ms > expiry_date:
-                    logger.debug("Local antigravity token in ~/.gemini/oauth_creds.json is expired")
-                    return None
+                    token_valid = False
             token = data.get("access_token")
-            if token and isinstance(token, str):
+            if token and isinstance(token, str) and token_valid:
                 return token.strip()
     except Exception as e:
         logger.debug("Could not read local antigravity credentials: %s", e)
+
+    # 3. Check Antigravity IDE globalStorage state.vscdb
+    try:
+        import base64
+        import sqlite3
+        import re
+        db_path = Path(os.path.expandvars(r"%APPDATA%\Antigravity IDE\User\globalStorage\state.vscdb"))
+        if db_path.exists():
+            conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+            cursor = conn.cursor()
+            row = cursor.execute("SELECT value FROM ItemTable WHERE key = 'antigravityUnifiedStateSync.oauthToken'").fetchone()
+            conn.close()
+            if row and row[0]:
+                raw_b64 = row[0]
+                b = base64.b64decode(raw_b64)
+                for m in re.finditer(b'eWEyOS[A-Za-z0-9_\\-\\+=]+', b):
+                    candidate = m.group()
+                    pad = len(candidate) % 4
+                    if pad:
+                        candidate += b'=' * (4 - pad)
+                    decoded = base64.b64decode(candidate).decode('latin1', errors='ignore')
+                    tm = re.search(r'ya29\.[A-Za-z0-9_\-]+', decoded)
+                    if tm:
+                        return tm.group(0)
+    except Exception as e:
+        logger.debug("Could not read Antigravity token from state.vscdb: %s", e)
 
     return None
 
@@ -236,3 +262,35 @@ class AntigravityProvider(GeminiProvider):
                     "delta": text_delta,
                     "finish_reason": first_cand.get("finishReason"),
                 }
+
+    async def list_models(self, api_key: str) -> List[Dict[str, Any]]:
+        """Return models supported by Antigravity local session."""
+        return [
+            {
+                "id": "gemini-2.5-pro",
+                "name": "Gemini 2.5 Pro (Antigravity High-Quota Reasoning)",
+                "context_window": 1000000,
+                "supports_tools": True,
+                "supports_vision": True,
+                "supports_thinking": True,
+                "is_dynamic": True,
+            },
+            {
+                "id": "gemini-2.5-flash",
+                "name": "Gemini 2.5 Flash (Antigravity Ultra-Fast)",
+                "context_window": 1000000,
+                "supports_tools": True,
+                "supports_vision": True,
+                "supports_thinking": True,
+                "is_dynamic": True,
+            },
+            {
+                "id": "gemini-3.8-flash",
+                "name": "Gemini 3.8 Flash (Antigravity Frontier)",
+                "context_window": 1000000,
+                "supports_tools": True,
+                "supports_vision": True,
+                "supports_thinking": True,
+                "is_dynamic": True,
+            },
+        ]

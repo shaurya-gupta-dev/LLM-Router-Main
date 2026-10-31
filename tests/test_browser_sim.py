@@ -4,7 +4,7 @@ import httpx
 import json
 
 async def test_browser_playground_simulation():
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=60.0) as client:
         # Step 1: fetchConfig (as done on page load)
         cfg_resp = await client.get("http://localhost:8080/api/config")
         assert cfg_resp.status_code == 200

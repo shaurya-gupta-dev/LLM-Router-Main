@@ -74,7 +74,7 @@ async def run_tests():
         # Custom priority hierarchy
         custom_priority = [
             ["cerebras", "gpt-oss-120b"],
-            ["gemini", "gemini-3.8-flash"],
+            ["gemini", "gemini-3.6-flash"],
             ["groq", "openai/gpt-oss-120b"],
         ]
         r = await client.post(
@@ -97,6 +97,30 @@ async def run_tests():
         model_ids = [m["id"] for m in models_data.get("data", [])]
         assert "mega-pool" in model_ids
         print("[PASS] mega-pool virtual model alias is registered")
+
+        # 6. Request History & IST Timestamps
+        from app.core.history_manager import history_manager
+        test_rec = history_manager.record_request(
+            endpoint="/v1/chat/completions",
+            protocol="openai",
+            requested_model="mega-pool",
+            resolved_provider="cerebras",
+            resolved_model="llama-3.3-70b",
+            status="fulfilled",
+            http_status=200,
+            prompt_tokens=10,
+            completion_tokens=25,
+            latency_ms=250.0,
+            tier="CODING",
+        )
+        assert test_rec["timestamp"].endswith(" AM IST") or test_rec["timestamp"].endswith(" PM IST"), f"Expected 12-hour AM/PM IST timestamp, got: {test_rec['timestamp']}"
+        r = await client.get("/api/admin/history?limit=10")
+        assert r.status_code == 200
+        hist_data = r.json()
+        assert len(hist_data["records"]) > 0
+        latest = hist_data["records"][0]
+        assert latest["timestamp"].endswith(" AM IST") or latest["timestamp"].endswith(" PM IST"), f"API record timestamp must be 12-hour AM/PM IST, got: {latest['timestamp']}"
+        print(f"[PASS] Request history returns valid 12-hour AM/PM IST timestamps: {latest['timestamp']}")
 
     print("\n[SUCCESS] ALL ADMIN & DYNAMIC ROUTING TESTS PASSED!")
 

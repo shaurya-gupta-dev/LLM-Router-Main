@@ -32,7 +32,7 @@ DEFAULT_PRESETS: Dict[str, Dict[str, Any]] = {
             ("groq", "openai/gpt-oss-120b"),
             ("groq", "openai/gpt-oss-20b"),
             ("sambanova", "gpt-oss-120b"),
-            ("gemini", "gemini-3.8-flash"),
+            ("gemini", "gemini-3.6-flash"),
             ("mistral", "codestral-latest"),
         ],
     },
@@ -40,7 +40,8 @@ DEFAULT_PRESETS: Dict[str, Dict[str, Any]] = {
         "name": "Best Quality",
         "description": "Prioritizes highest capability reasoning and coding models",
         "priority": [
-            ("gemini", "gemini-3.8-flash"),
+            ("gemini", "gemini-3-flash-preview"),
+            ("gemini", "gemini-3.6-flash"),
             ("mistral", "codestral-latest"),
             ("cerebras", "gpt-oss-120b"),
             ("groq", "openai/gpt-oss-120b"),
@@ -58,9 +59,9 @@ DEFAULT_PRESETS: Dict[str, Dict[str, Any]] = {
             ("cerebras", "qwen-3.8-27b"),
             ("cerebras", "gpt-oss-120b"),
             ("gemini", "gemma-4-31b-it"),
-            ("gemini", "gemini-3.8-flash"),
             ("gemini", "gemini-3.5-flash-lite"),
             ("gemini", "gemini-3.1-flash-lite"),
+            ("gemini", "gemini-2.5-flash-lite"),
             ("sambanova", "gpt-oss-120b"),
             ("cohere", "command-r-08-2024"),
             ("mistral", "mistral-small-latest"),
@@ -96,6 +97,7 @@ class StateManager:
             },
             "model_health_cache": {},
             "last_recheck": 0,
+            "discovered_models": {},
             "version": 2,
         }
 
@@ -230,6 +232,24 @@ class StateManager:
                 dict(self._state.get("model_health_cache", {})),
                 self._state.get("last_recheck", 0),
             )
+
+    # ---------------------------------------------------------------
+    # Dynamically Discovered Provider Models
+    # ---------------------------------------------------------------
+    def get_discovered_models(self, provider_id: Optional[str] = None) -> Any:
+        with self._lock:
+            disc = self._state.get("discovered_models", {})
+            if provider_id:
+                return list(disc.get(provider_id, []))
+            return {p: list(models) for p, models in disc.items()}
+
+    def set_discovered_models(self, provider_id: str, models: List[Dict[str, Any]]) -> None:
+        with self._lock:
+            if "discovered_models" not in self._state:
+                self._state["discovered_models"] = {}
+            self._state["discovered_models"][provider_id] = models
+            self._save()
+        logger.info("Saved %d discovered models for provider '%s'", len(models), provider_id)
 
     # ---------------------------------------------------------------
     # Antigravity Auth Token / API Key

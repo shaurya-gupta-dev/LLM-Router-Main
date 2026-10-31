@@ -86,6 +86,8 @@ async def handle_anthropic_messages(
                 tools=standard_tools,
                 max_tokens=req.max_tokens,
                 temperature=req.temperature or 0.7,
+                endpoint="/v1/messages",
+                protocol="anthropic",
             )
             sse_generator = generate_anthropic_stream_from_chunks(
                 model=req.model,
@@ -129,12 +131,16 @@ async def handle_anthropic_messages(
                 tools=standard_tools,
                 max_tokens=req.max_tokens,
                 temperature=req.temperature or 0.7,
+                endpoint="/v1/messages",
+                protocol="anthropic",
             )
 
             # Build Anthropic content blocks
             content_blocks: list[dict[str, Any]] = []
-            if result.content or not result.tool_calls:
-                content_blocks.append({"type": "text", "text": result.content or ""})
+            # Only add text block when there is actual non-empty text —
+            # never send an empty text block (clients like Hermes reject it).
+            if result.content:
+                content_blocks.append({"type": "text", "text": result.content})
 
             if result.tool_calls:
                 content_blocks.extend(openai_tool_calls_to_anthropic_blocks(result.tool_calls))

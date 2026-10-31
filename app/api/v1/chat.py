@@ -78,6 +78,8 @@ async def handle_chat_completions(
                 tools=req.tools,
                 max_tokens=req.max_tokens,
                 temperature=req.temperature or 0.7,
+                endpoint="/v1/chat/completions",
+                protocol="openai",
             )
             sse_generator = generate_openai_stream_from_chunks(
                 model=req.model,
@@ -115,6 +117,8 @@ async def handle_chat_completions(
                 tools=req.tools,
                 max_tokens=req.max_tokens,
                 temperature=req.temperature or 0.7,
+                endpoint="/v1/chat/completions",
+                protocol="openai",
             )
             payload = create_openai_response(
                 model=req.model,

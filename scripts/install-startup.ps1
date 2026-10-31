@@ -19,5 +19,6 @@ $shortcut.Save()
 Write-Host "=======================================================" -ForegroundColor Green
 Write-Host "  >> Successfully installed LLM Router to Windows Startup!" -ForegroundColor Green
 Write-Host ("  Shortcut: " + $shortcutPath) -ForegroundColor Cyan
+Write-Host ("  Target:   wscript.exe `"" + $targetPath + "`"") -ForegroundColor Cyan
 Write-Host "  The router will now start silently whenever your PC boots." -ForegroundColor White
 Write-Host "=======================================================" -ForegroundColor Green

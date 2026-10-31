@@ -86,10 +86,13 @@ class RateBudgetManager:
     DEFAULT_CALIBRATIONS: Dict[str, ProviderBudgetLimits] = {
         "openrouter": ProviderBudgetLimits(rpm_limit=20, rpd_limit=50, soft_threshold_pct=0.70),
         "gemini": ProviderBudgetLimits(rpm_limit=15, rpd_limit=1500, soft_threshold_pct=0.80),
-        "gemini:gemini-3.8-flash": ProviderBudgetLimits(rpm_limit=15, rpd_limit=1500, soft_threshold_pct=0.80),
+        "gemini:gemini-3-flash-preview": ProviderBudgetLimits(rpm_limit=15, rpd_limit=1500, soft_threshold_pct=0.80),
+        "gemini:gemini-3.6-flash": ProviderBudgetLimits(rpm_limit=15, rpd_limit=1500, soft_threshold_pct=0.80),
         "gemini:gemini-3.5-flash-lite": ProviderBudgetLimits(rpm_limit=15, rpd_limit=500, soft_threshold_pct=0.80),
         "gemini:gemini-3.1-flash-lite": ProviderBudgetLimits(rpm_limit=15, rpd_limit=500, soft_threshold_pct=0.80),
         "gemini:gemma-4-31b-it": ProviderBudgetLimits(rpm_limit=30, rpd_limit=14000, soft_threshold_pct=0.85),
+        "gemini:gemini-2.5-flash": ProviderBudgetLimits(rpm_limit=15, rpd_limit=1500, soft_threshold_pct=0.80),
+        "gemini:gemini-2.5-flash-lite": ProviderBudgetLimits(rpm_limit=15, rpd_limit=500, soft_threshold_pct=0.80),
         "cerebras": ProviderBudgetLimits(rpm_limit=30, rpd_limit=14400, soft_threshold_pct=0.75),
         "groq": ProviderBudgetLimits(rpm_limit=30, rpd_limit=14400, soft_threshold_pct=0.75),
         "groq:openai/gpt-oss-120b": ProviderBudgetLimits(rpm_limit=30, rpd_limit=1000, soft_threshold_pct=0.75),
@@ -108,7 +111,7 @@ class RateBudgetManager:
         for p_id, limits in self.DEFAULT_CALIBRATIONS.items():
             self._trackers[p_id] = ProviderBudgetTracker(p_id, limits)
 
-    def register_provider(self, provider_id: str, rpm: int, rpd: int):
+    def register_provider(self, provider_id: str, rpm: int, rpd: int, num_keys: int = 1):
         limits = self.DEFAULT_CALIBRATIONS.get(
             provider_id, ProviderBudgetLimits(rpm_limit=rpm or 20, rpd_limit=rpd or 1000)
         )
@@ -117,6 +120,17 @@ class RateBudgetManager:
         if rpd > 0:
             limits.rpd_limit = rpd
         self._trackers[provider_id] = ProviderBudgetTracker(provider_id, limits)
+
+        # Scale any model-specific calibrated limits for this provider proportionally by num_keys
+        if num_keys > 1:
+            for key, default_limit in self.DEFAULT_CALIBRATIONS.items():
+                if key.startswith(f"{provider_id}:"):
+                    scaled = ProviderBudgetLimits(
+                        rpm_limit=default_limit.rpm_limit * num_keys,
+                        rpd_limit=default_limit.rpd_limit * num_keys,
+                        soft_threshold_pct=default_limit.soft_threshold_pct,
+                    )
+                    self._trackers[key] = ProviderBudgetTracker(key, scaled)
 
     def check_availability(
         self,

@@ -15,20 +15,20 @@ def test_dynamic_waterfall():
     # 1. Base chain resolution for mega-pool
     chain = router_engine.resolve_fallback_chain("mega-pool")
     assert len(chain) >= 8, f"Expected at least 8 models in mega-pool, got {len(chain)}"
-    assert ("gemini", "gemini-3.8-flash") in chain
+    assert ("gemini", "gemma-4-31b-it") in chain
     assert ("cerebras", "gpt-oss-120b") in chain
     print(f"[PASS] mega-pool resolved {len(chain)} candidates")
 
     # 2. Model disabling filters out disabled model
-    state_manager.toggle_model("gemini", "gemini-3.8-flash", disabled=True)
+    state_manager.toggle_model("gemini", "gemma-4-31b-it", disabled=True)
     chain_after_disable = router_engine.resolve_fallback_chain("mega-pool")
-    assert ("gemini", "gemini-3.8-flash") not in chain_after_disable
+    assert ("gemini", "gemma-4-31b-it") not in chain_after_disable
     print("[PASS] Disabled model filtered out from cascade chain")
 
     # Re-enable
-    state_manager.toggle_model("gemini", "gemini-3.8-flash", disabled=False)
+    state_manager.toggle_model("gemini", "gemma-4-31b-it", disabled=False)
     chain_after_reenable = router_engine.resolve_fallback_chain("mega-pool")
-    assert ("gemini", "gemini-3.8-flash") in chain_after_reenable
+    assert ("gemini", "gemma-4-31b-it") in chain_after_reenable
     print("[PASS] Re-enabled model restored to cascade chain")
 
     # 3. Strategy: max_speed puts fastest providers first
@@ -40,7 +40,7 @@ def test_dynamic_waterfall():
     # 4. Strategy: best_quality
     state_manager.set_active_strategy("best_quality")
     chain_quality = router_engine.resolve_fallback_chain("claude-3-7-sonnet-latest")
-    assert chain_quality[0] == ("gemini", "gemini-3.8-flash")
+    assert chain_quality[0] == ("gemini", "gemini-3-flash-preview")
     print(f"[PASS] best_quality strategy prioritized: {chain_quality[0]}")
 
     # 5. Strategy: custom

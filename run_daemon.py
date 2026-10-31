@@ -23,7 +23,9 @@ def cleanup_pid():
 
 def setup_daemon_logging():
     global LOG_FILE
+    was_none = False
     if sys.stdout is None:
+        was_none = True
         sys.stdout = open(str(LOG_FILE), "a", encoding="utf-8", buffering=1)
     if sys.stderr is None:
         sys.stderr = open(str(LOG_FILE), "a", encoding="utf-8", buffering=1)
@@ -31,7 +33,7 @@ def setup_daemon_logging():
     handlers = [
         logging.FileHandler(str(LOG_FILE), encoding="utf-8", mode="a"),
     ]
-    if sys.stdout is not None:
+    if sys.stdout is not None and not was_none:
         handlers.append(logging.StreamHandler(sys.stdout))
 
     logging.basicConfig(
@@ -44,6 +46,21 @@ def main():
     setup_daemon_logging()
     logger = logging.getLogger("llm_router.daemon")
 
+    from app.core.config import config
+    import socket
+    host = config.settings.router_host
+    port = config.settings.router_port
+
+    # Prevent crash/conflict if already running
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            if s.connect_ex((host, port)) == 0:
+                logger.info("LLM Router is already running on http://%s:%d (port in use). Exiting cleanly.", host, port)
+                sys.exit(0)
+    except Exception:
+        pass
+
     # Record PID
     current_pid = os.getpid()
     PID_FILE.write_text(str(current_pid), encoding="utf-8")
@@ -53,10 +70,6 @@ def main():
     logger.info("  LLM Router Daemon Starting (PID: %d)", current_pid)
     logger.info("  Log file: %s", LOG_FILE)
     logger.info("=======================================================")
-
-    from app.core.config import config
-    host = config.settings.router_host
-    port = config.settings.router_port
 
     def handle_signal(sig, frame):
         logger.info("Received signal %s. Shutting down daemon...", sig)

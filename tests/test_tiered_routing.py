@@ -37,7 +37,7 @@ class TestTieredRouting(unittest.IsolatedAsyncioTestCase):
         tier = r.headers.get("X-Router-Tier")
         prov = r.headers.get("X-Routed-Provider")
         self.assertEqual(tier, "CASUAL")
-        self.assertIn(prov, ["openrouter", "gemini", "groq", "cerebras", "cohere"])
+        self.assertIn(prov, ["apinex", "openrouter", "gemini", "groq", "cerebras", "cohere", "mistral"])
 
     async def test_coding_query_tiering(self):
         """Code prompt should be classified as CODING."""

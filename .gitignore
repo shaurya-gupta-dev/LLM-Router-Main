@@ -31,14 +31,27 @@ env.bak/
 venv.bak/
 
 # Environment Variables & Secrets
-
 .env
+.env.*
+!.env.example
+*.pem
+*.key
 
-
-# Database & Logs
+# Runtime State & Logs
+history.json
+router.log
+router.pid
+state.json
 *.sqlite
 *.sqlite3
-*.log
+
+# Test & Debug Artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.playwright-mcp/
+*.png
+*.jpg
 
 # IDE & OS
 .idea/

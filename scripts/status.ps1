@@ -14,6 +14,9 @@ if (Test-Path $pidFile) {
     $pidVal = (Get-Content $pidFile -Raw).Trim()
 }
 
+$startupLnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'LLM-Router-Background.lnk'
+$autoStartEnabled = (Test-Path $startupLnk)
+
 try {
     $r = Invoke-RestMethod -Uri "http://localhost:8080/api/health" -TimeoutSec 3
     Write-Host "  Status:             [RUNNING] (Online)" -ForegroundColor Green
@@ -26,4 +29,11 @@ try {
     Write-Host "  Status:             [STOPPED] (Offline)" -ForegroundColor Red
     Write-Host "  To start:           Run start-background.bat" -ForegroundColor Yellow
 }
+
+if ($autoStartEnabled) {
+    Write-Host "  Auto-Start on Boot: [ENABLED] (Windows Startup)" -ForegroundColor Green
+} else {
+    Write-Host "  Auto-Start on Boot: [DISABLED] (Run install-startup.bat to enable)" -ForegroundColor Yellow
+}
+
 Write-Host "=======================================================" -ForegroundColor Cyan

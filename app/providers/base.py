@@ -77,3 +77,7 @@ class BaseProvider(ABC):
         Yields unified chunks: {"text": str, "tool_call": dict, "stop_reason": str, "output_tokens": int}
         """
         pass
+
+    async def list_models(self, api_key: str) -> List[Dict[str, Any]]:
+        """Query live models dynamically from upstream provider endpoint."""
+        return []

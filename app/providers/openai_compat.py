@@ -33,10 +33,10 @@ class OpenAICompatProvider(BaseProvider):
             use_http2 = True
         except ImportError:
             pass
-        connect_timeout = 8.0 if provider_id == "apinex" else 15.0
-        read_timeout = 35.0 if provider_id == "apinex" else 90.0
+        connect_timeout = 6.0 if provider_id in ("apinex", "groq", "cerebras", "sambanova") else 6.0
+        read_timeout = 35.0 if provider_id == "apinex" else 45.0
         self.client = httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=connect_timeout, read=read_timeout, write=15.0, pool=30.0),
+            timeout=httpx.Timeout(connect=connect_timeout, read=read_timeout, write=10.0, pool=15.0),
             http2=use_http2,
             follow_redirects=True,
         )
@@ -102,6 +102,24 @@ class OpenAICompatProvider(BaseProvider):
                 provider=self.provider_id,
             )
 
+    def _sanitize_tools(self, tools: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Normalize tool parameters so every property has a 'type' attribute."""
+        import copy
+        clean_tools = copy.deepcopy(tools)
+        for tool in clean_tools:
+            if not isinstance(tool, dict):
+                continue
+            func = tool.get("function")
+            if isinstance(func, dict):
+                params = func.get("parameters")
+                if isinstance(params, dict):
+                    props = params.get("properties")
+                    if isinstance(props, dict):
+                        for prop_name, prop_val in props.items():
+                            if isinstance(prop_val, dict) and "type" not in prop_val:
+                                prop_val["type"] = "string"
+        return clean_tools
+
     def _prepare_payload(
         self,
         model: str,
@@ -119,13 +137,17 @@ class OpenAICompatProvider(BaseProvider):
         }
         if self.provider_id == "aihorde":
             payload["max_tokens"] = max(16, max_tokens) if max_tokens else 512
+        elif self.provider_id == "cohere":
+            if max_tokens:
+                payload["max_tokens"] = min(4096, max_tokens)
         else:
             if max_tokens:
                 payload["max_tokens"] = max_tokens
-            if tools:
-                payload["tools"] = tools
-                if self.provider_id in ("nvidia", "radeon"):
-                    payload["parallel_tool_calls"] = False
+
+        if tools:
+            payload["tools"] = self._sanitize_tools(tools)
+            if self.provider_id in ("nvidia", "radeon"):
+                payload["parallel_tool_calls"] = False
         return payload
 
     async def chat_completion(
@@ -171,6 +193,19 @@ class OpenAICompatProvider(BaseProvider):
         # those fields contain internal chain-of-thought and must never be shown.
         tool_calls = msg.get("tool_calls")
         stop_reason = choice.get("finish_reason") or "stop"
+
+        # Guard: if both content and tool_calls are empty, this model produced
+        # no usable output (e.g. thinking-only response stripped to nothing, or
+        # a truly empty completion). Treat as a failure so the router can
+        # fall through to the next candidate instead of returning blank content.
+        if content is None and not tool_calls:
+            finish = choice.get("finish_reason", "")
+            raise ProviderException(
+                f"Provider '{self.provider_id}' model '{model}' returned empty output "
+                f"(finish_reason={finish!r}). No text or tool calls in response.",
+                status_code=500,
+                provider=self.provider_id,
+            )
 
         usage = data.get("usage", {})
         p_tokens = usage.get("prompt_tokens", 0) or 0
@@ -255,3 +290,59 @@ class OpenAICompatProvider(BaseProvider):
 
             if finish_reason:
                 yield {"stop_reason": finish_reason}
+
+    async def list_models(self, api_key: str) -> List[Dict[str, Any]]:
+        """Query live models dynamically from upstream /models endpoint."""
+        base = self.base_url.rstrip("/")
+        if self.provider_id == "cloudflare":
+            account_id = "default"
+            if ":" in api_key:
+                account_id, _ = api_key.split(":", 1)
+            elif os.getenv("CLOUDFLARE_ACCOUNT_ID"):
+                account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID", "default")
+            base = base.replace("{account_id}", account_id.strip())
+
+        url = f"{base}/models"
+        headers = self._build_headers(api_key)
+        try:
+            resp = await self.client.get(url, headers=headers, timeout=10.0)
+            if resp.status_code != 200:
+                logger.debug("Provider %s GET /models returned HTTP %d", self.provider_id, resp.status_code)
+                return []
+            data = resp.json()
+            raw_list = data.get("data") if isinstance(data, dict) else data
+            if not isinstance(raw_list, list):
+                return []
+
+            discovered = []
+            for item in raw_list:
+                if isinstance(item, dict):
+                    m_id = item.get("id") or item.get("name")
+                    if not m_id:
+                        continue
+                    m_str = str(m_id)
+                    ctx = item.get("context_window") or item.get("context_length") or 128000
+                    discovered.append({
+                        "id": m_str,
+                        "name": item.get("name") or m_str,
+                        "context_window": ctx,
+                        "supports_tools": bool(item.get("tools") or "tool" in str(item).lower()),
+                        "supports_vision": bool("vision" in m_str.lower() or "vl" in m_str.lower()),
+                        "supports_thinking": bool("r1" in m_str.lower() or "reason" in m_str.lower() or "qwq" in m_str.lower()),
+                        "is_dynamic": True,
+                    })
+                elif isinstance(item, str):
+                    discovered.append({
+                        "id": item,
+                        "name": item,
+                        "context_window": 128000,
+                        "supports_tools": True,
+                        "supports_vision": bool("vision" in item.lower() or "vl" in item.lower()),
+                        "supports_thinking": bool("r1" in item.lower() or "reason" in item.lower()),
+                        "is_dynamic": True,
+                    })
+            logger.info("Provider '%s' discovered %d live models from /models", self.provider_id, len(discovered))
+            return discovered
+        except Exception as e:
+            logger.debug("Failed to list models for provider %s: %s", self.provider_id, e)
+            return []

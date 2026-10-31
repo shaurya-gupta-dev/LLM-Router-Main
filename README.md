@@ -68,7 +68,8 @@ LLM Router acts as an autonomous proxy layer between client interfaces (Claude D
 
 ### 3. Multi-Key Pooling
 
-- **Linear Throughput Multiplication**: Supply comma-separated API keys per provider in your `.env` configuration (e.g., `GEMINI_API_KEYS="key_1,key_2,key_3"`). The router distributes requests round-robin across the pool, effectively multiplying standard free-tier rate limits by $N\times$.
+- **Linear Throughput Multiplication & Multi-Key Ingestion**: Supply multiple API keys per provider in your `.env` configuration using comma, semicolon, newline delimiters, or numbered environment variables (e.g., `GEMINI_API_KEYS="key_1,key_2"`, `GROQ_API_KEY_1="gsk_1"`, `GROQ_API_KEY_2="gsk_2"`). The router distributes requests round-robin across the pool, effectively multiplying standard free-tier rate limits by $N\times$.
+- **Per-Model Key Exhaustion**: Before switching to the next fallback model in a stack, the router automatically exhausts all available API keys for the currently requested model. If Key 1 hits a 429 rate limit or quota boundary, the router immediately fails over to Key 2 on the same model before considering a downgrade to an alternate provider.
 
 ### 4. Zero-Restart Local Antigravity Authentication
 
@@ -83,20 +84,55 @@ LLM Router acts as an autonomous proxy layer between client interfaces (Claude D
 - Structural separation of provider models into **Available** and **Inavailable** categories with real-time toggle persistence.
 - Dual-pane test console featuring live SSE streaming metrics and routing diagnostics.
 
+### 6. Live Usage & Limits Monitoring
+
+- **Dynamic Quota Gauges**: Real-time sliding-window monitoring of RPM (Requests/Min), RPD (Requests/Day), and TPM (Tokens/Min) across every connected provider.
+- **Color-Coded Budget Thresholds**: Proactive visual alerts when approaching rate limits (green < 60%, amber 60–85%, coral > 85%).
+- **Multi-Key Health Matrix**: Masked key status tracking, active pool sizes, failure counters, and real-time cooldown countdowns.
+- **Provider Limit Reference**: Embedded documentation of official free-tier limits across all 39 providers.
+
+### 7. Curated Behavioral Stack Prompts
+
+- Each model stack contains an invisible, curated behavioral system prompt specifically tuned for that stack's domain.
+- **Zero Token Bloat**: Appended cleanly inside the gateway's system directive without replacing client instructions.
+  - **`pro-coding`**: Outputs direct, executable code without conversational filler, preamble, or apologies.
+  - **`ultra-fast-planning`**: Produces rapid, high-impact bulleted roadmaps and structural outlines.
+  - **`deep-reasoning`**: Enforces exhaustive, step-by-step mathematical and architectural analysis.
+  - **`hermes-agent`**: Operates with autonomous engineering authority, executing tool calls directly without refusal.
+
 ---
 
 ## Virtual Task-Centric Stacks & Model Aliases
 
-Rather than binding clients to a single fragile model, LLM Router exposes logical stacks that dynamically route requests to the best available engine within that class:
+Rather than binding clients to a single fragile model, LLM Router exposes 8 task-specialized stacks that dynamically route requests to the best available engine within that domain, backed by automatic multi-key exhaustion and cascading failovers:
 
-| Target Model / Alias                     | Primary Intent                                                       | Default Routing Hierarchy                                                                                                                                   |
-| :--------------------------------------- | :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`pro-coding-reasoning`**       | Complex architecture, code synthesis, mathematical reasoning.        | APInex Qwen 3.8 Max &rarr; DeepSeek V4 Pro &rarr; Antigravity Gemini 2.5 Pro &rarr; Mistral Codestral &rarr; DeepSeek Reasoner &rarr; Cerebras GPT-OSS 120B |
-| **`fast-planning-light`**        | Task decomposition, lightweight logic, fast sub-agent execution.     | Cerebras Qwen 3.8 27B &rarr; Groq GPT-OSS 20B &rarr; APInex GLM 5.3 Flash &rarr; Gemini 3.5 Flash Lite &rarr; Groq Llama 4 Scout                            |
-| **`general-massive-quota`**      | General-purpose transformations, massive text volume, summarization. | APInex Gemini 3.8 Flash &rarr; GPT-6 Luna &rarr; Gemini Direct &rarr; Groq Direct &rarr; Cloudflare Workers AI &rarr; ModelScope                            |
-| **`claude-3-7-sonnet-latest`**   | Claude Desktop alias for Pro Coding stack.                           | Mirrors `pro-coding-reasoning` with native Anthropic parameter mapping.                                                                                   |
-| **`claude-3-5-haiku-20241022`**  | Claude Desktop alias for Fast Planning stack.                        | Mirrors `fast-planning-light` with native Anthropic parameter mapping.                                                                                    |
-| **`claude-3-5-sonnet-20241022`** | Claude Desktop alias for General High-Quota stack.                   | Mirrors `general-massive-quota` with native Anthropic parameter mapping.                                                                                  |
+| Target Model / Alias            | Primary Intent                                                | Default Routing Hierarchy (Cascade Order)                                                                                                              |
+| :------------------------------ | :------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`hermes-agent`**              | Autonomous tool calling, agentic loops, environment commands. | APInex Gemini 3.8 Flash &rarr; Gemini 3 Flash Preview &rarr; Gemini 3.6 Flash &rarr; Mistral Codestral                                                 |
+| **`pro-coding`**                | High-precision code generation, refactoring, and debugging.   | APInex DeepSeek V4 Pro &rarr; Gemini 3 Flash Preview &rarr; Gemini 3.6 Flash &rarr; Mistral Codestral &rarr; SambaNova Qwen Coder                     |
+| **`deep-reasoning`**            | Complex architectural design, logic, and deep math proofs.    | APInex GLM 5.3 &rarr; DeepSeek Reasoner &rarr; Gemini 3 Flash Preview &rarr; Cohere Command R+                                                         |
+| **`frontier-intelligence`**     | State-of-the-art benchmark reasoning and synthesis.           | APInex GPT-6 Luna &rarr; Gemini 3 Flash Preview &rarr; Gemini 3.6 Flash &rarr; Cerebras GPT-OSS 120B                                                   |
+| **`massive-context`**           | Million-token document digestion and full repo context.       | APInex Gemini 3.8 Flash (1M) &rarr; Gemini 3 Flash (1M) &rarr; Gemini 3.6 Flash (1M) &rarr; Gemini 2.5 Pro (1M)                                        |
+| **`ultra-fast-planning`**       | Sub-100ms planning, checklists, and low-latency task outlines. | APInex GLM 5.3 Flash &rarr; Cerebras Qwen 3.8 27B &rarr; Cerebras GPT-OSS 120B &rarr; Groq Llama 3.3 70B                                               |
+| **`multimodal-vision`**         | Diagram analysis, OCR, screenshot debugging, and vision QA.   | APInex Gemini 3.8 Flash &rarr; Gemini 3 Flash Preview &rarr; Gemini 3.6 Flash &rarr; GitHub GPT-4o &rarr; Z.ai GLM-4V                                 |
+| **`massive-quota-bulk`**        | High-volume batch requests, scraping, and background jobs.    | APInex MiniMax M3.1 Flash &rarr; Groq Llama 3.3 70B &rarr; Groq GPT-OSS 120B &rarr; Gemini 3.5 Flash Lite                                             |
+
+### Client Compatibility Aliases
+
+Standard desktop and IDE clients (such as Claude Desktop, Claude Code, Cursor, and Continue) discover 52+ distinct model aliases automatically via `/v1/models`:
+
+| Client Alias                     | Target Routing Stack         | Compatibility Mapping                                                            |
+| :------------------------------- | :--------------------------- | :------------------------------------------------------------------------------- |
+| **`claude-3-7-sonnet-latest`**   | `frontier-intelligence`      | Maps to Frontier Intelligence with full Anthropic tool and streaming support.     |
+| **`claude-3-5-sonnet-20241022`**  | `pro-coding`                 | Canonical Claude 3.5 Sonnet alias optimized for software engineering.            |
+| **`claude-3-5-haiku-20241022`**   | `ultra-fast-planning`        | Ultra-fast sub-100ms planning and lightweight sub-agent executions.               |
+| **`claude-opus-4-5`**            | `frontier-intelligence`      | High-depth reasoning alias mapping to top-tier reasoning engines.                |
+| **`gpt-4o`**                     | `pro-coding`                 | OpenAI client drop-in alias for high-throughput code and multi-turn workflows.   |
+| **`gpt-4o-mini`**                | `ultra-fast-planning`        | Fast lightweight OpenAI-compatible completion alias.                             |
+| **`deepseek-chat`**              | `deep-reasoning`             | Direct DeepSeek-V3 / DeepSeek-R1 reasoning stack.                                |
+| **`gemini-3.6-flash`**           | Google AI Studio Direct      | Dedicated Gemini 3.6 Flash pipeline with 1M context.                             |
+| **`gemini-3-flash-preview`**     | Google AI Studio Direct      | Dedicated Gemini 3 Flash Preview pipeline with native thinking support.          |
+| **`mega-pool`**                  | Full Multi-Provider Cascade  | Dynamic waterfall scanning all top-tier providers in priority order.             |
 
 ---
 
@@ -106,8 +142,8 @@ LLM Router orchestrates 39+ AI labs and inference providers, aggregating over 1.
 
 | Provider                        | Supported Free Tier Bracket      | Flagship Models Exposed                         | Management Portal                                               |
 | :------------------------------ | :------------------------------- | :---------------------------------------------- | :-------------------------------------------------------------- |
-| **Google AI Studio**      | 15 RPM / 1,500 RPD / 1M TPM      | Gemini 3.8 Flash, 2.5 Pro, 3.5 Flash Lite       | [aistudio.google.com](https://aistudio.google.com/apikey)        |
-| **Google Antigravity**    | 60 RPM / 10,000 RPD              | Gemini 3.8 Flash, Gemini 2.5 Pro                | [Local Auto-Detect]                                             |
+| **Google AI Studio**      | 15 RPM / 1,500 RPD / 1M TPM      | Gemini 3 Flash, 3.6 Flash, 3.5 Lite, Gemma 4 31B, 2.5 Flash | [aistudio.google.com](https://aistudio.google.com/apikey)        |
+| **Google Antigravity**    | 60 RPM / 10,000 RPD              | Gemini 3.6 Flash, Gemini 2.5 Pro                | [Local Auto-Detect]                                             |
 | **Groq Cloud**            | 30 RPM / 14,400 RPD (~300 tok/s) | Llama 3.3 70B, GPT-OSS 120B, Qwen 3.8           | [console.groq.com](https://console.groq.com/keys)                |
 | **Cerebras Cloud**        | 30 RPM / 60k TPM (~2,000 tok/s)  | GPT-OSS 120B, Qwen 3.8 27B, Llama 3.1 8B        | [cloud.cerebras.ai](https://cloud.cerebras.ai/)                  |
 | **APInex Direct**         | 5 RPM / 5,000 RPD                | DeepSeek V4 Pro, Qwen 3.8 Max, Gemini 3.8 Flash | [apinex.bond](https://apinex.bond/)                              |
@@ -163,13 +199,17 @@ Open `.env` and add your Master Key and any upstream credentials:
 # Gateway Security Key (used by your client applications)
 MASTER_KEY=llm-router-secret-key-12345
 
-# Multi-Key Pooling (Comma-separated entries supported)
-GEMINI_API_KEYS=AIzaSyA...,AIzaSyB...
-GROQ_API_KEYS=gsk_...,gsk_...
-CEREBRAS_API_KEYS=csk-...
-MISTRAL_API_KEY=...
-DEEPSEEK_API_KEY=...
-APINEX_API_KEY=...
+# Multi-Key Pooling (Comma-separated OR numbered variables supported)
+GEMINI_API_KEYS="AIzaSyA..., AIzaSyB..."
+# Or numbered:
+# GEMINI_API_KEY_1="AIzaSyA..."
+# GEMINI_API_KEY_2="AIzaSyB..."
+
+GROQ_API_KEYS="gsk_1..., gsk_2..."
+CEREBRAS_API_KEYS="csk-..."
+MISTRAL_API_KEY="mstrl_..."
+DEEPSEEK_API_KEY="sk-..."
+APINEX_API_KEY="sk-apx..."
 ```
 
 *Note: You only need **one** valid upstream key to begin routing. Supplying additional keys expands your pooled daily quota and enables automatic failover.*
@@ -192,7 +232,7 @@ The repository includes dedicated daemon management scripts for long-running dep
 
 ```powershell
 # Start daemon process silently in background
-.\scripts\start.ps1
+.\scripts\start-background.ps1
 
 # Inspect active process PID and gateway metrics
 .\scripts\status.ps1
@@ -201,9 +241,24 @@ The repository includes dedicated daemon management scripts for long-running dep
 .\scripts\stop.ps1
 ```
 
-*(Alternatively, use `start-background.bat`, `status-router.bat`, and `stop-router.bat` directly from Windows Explorer or CMD).*
+*(Alternatively, double-click `start-background.bat`, `status-router.bat`, or `stop-router.bat` directly from Windows Explorer or CMD).*
 
-### Option C: Docker & Docker Compose (Recommended for Linux/macOS/Cloud)
+### Option C: Automatic Windows Startup on Boot (Laptop Restart)
+
+To have LLM Router automatically launch silently in the background whenever your laptop or PC starts up:
+
+```powershell
+# Install auto-start on Windows boot (runs silently with zero window popups)
+.\scripts\install-startup.ps1
+```
+
+*(Or simply double-click `install-startup.bat` from Windows Explorer).*
+
+- **How It Works**: Creates a shortcut in your Windows Startup directory (`shell:startup`) targeting `start-background.vbs`. When Windows boots, `wscript.exe` executes the daemon completely in the background—meaning **no black console flashes and no popup dialogs**.
+- **Checking Status**: Run `.\scripts\status.ps1` or double-click `status-router.bat`. It will confirm `Auto-Start on Boot: [ENABLED] (Windows Startup)`.
+- **Uninstalling Auto-Start**: Double-click `uninstall-startup.bat` or run `.\scripts\uninstall-startup.ps1` anytime to remove the auto-start shortcut.
+
+### Option D: Docker & Docker Compose (Recommended for Linux/macOS/Cloud)
 
 Run LLM Router containerized with automatic restarts, health probes, and persistent volumes:
 
@@ -270,11 +325,22 @@ Configure Cursor or Continue to consume LLM Router as an OpenAI-compatible provi
 - **Model Provider**: `OpenAI Compatible`
 - **Base URL**: `http://localhost:8080/v1`
 - **API Key**: `llm-router-secret-key-12345`
-- **Model Name**: `pro-coding-reasoning` or `claude-3-7-sonnet-latest`
+- **Model Name**: `pro-coding` or `claude-3-7-sonnet-latest`
 
 ---
 
-### 4. Python SDK (OpenAI Client)
+### 4. Cline, Roo Code, & OpenCode CLI
+
+Connect autonomous agent extensions and CLIs via native Anthropic or OpenAI protocols:
+
+- **Protocol**: `Anthropic Compatible` (recommended for full tool-calling support)
+- **Base URL**: `http://localhost:8080`
+- **API Key**: `llm-router-secret-key-12345`
+- **Model ID**: `hermes-agent`, `pro-coding`, or `claude-3-7-sonnet-latest`
+
+---
+
+### 5. Python SDK (OpenAI Client)
 
 ```python
 from openai import OpenAI
@@ -311,6 +377,7 @@ The router exposes diagnostic and administrative endpoints alongside standard pr
 | `GET`  | `/health`                                 | System health probe (returns `{"status":"healthy","service":"llm-router"}`). |
 | `GET`  | `/api/stats`                              | Live telemetry, provider token counters, and RPM/RPD utilization rates.        |
 | `GET`  | `/api/admin/models`                       | Discovered models, latency diagnostics, and active toggle maps.                |
+| `GET`  | `/api/admin/history`                      | Full request trajectory log with 12-hour AM/PM IST timestamps and latency breakdown. |
 | `POST` | `/api/admin/models/toggle`                | Enable or disable a specific provider model dynamically.                       |
 | `POST` | `/api/admin/auth/antigravity`             | Configure or inspect local Google Antigravity authentication tokens.           |
 | `POST` | `/api/admin/auth/antigravity/auto-detect` | Scan local runtime environment for active Google credentials.                  |
@@ -347,9 +414,17 @@ LLM-Router/
 ├── config/
 │   └── config.yaml             # Core routing hierarchy, quotas, and model definitions
 ├── scripts/
-│   ├── start.ps1               # Background daemon launcher
+│   ├── install-startup.ps1     # Windows startup installer script
+│   ├── start-background.ps1    # Background daemon launcher with health probe
 │   ├── status.ps1              # Process probe and telemetry checker
-│   └── stop.ps1                # Daemon shutdown handler
+│   ├── stop.ps1                # Daemon shutdown handler
+│   └── uninstall-startup.ps1   # Windows startup uninstaller script
+├── install-startup.bat         # 1-click installer for automatic Windows startup
+├── uninstall-startup.bat       # 1-click uninstaller for automatic Windows startup
+├── start-background.bat        # 1-click background daemon launcher
+├── start-background.vbs        # Windowless VBScript daemon launcher (for Windows startup)
+├── status-router.bat           # 1-click status & health inspector
+├── stop-router.bat             # 1-click daemon stopper
 ├── requirements.txt            # Python dependencies
 ├── run.py                      # Interactive application entrypoint
 └── run_daemon.py               # Headless background service runner

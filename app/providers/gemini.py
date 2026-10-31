@@ -85,7 +85,7 @@ class GeminiProvider(BaseProvider):
         except ImportError:
             pass
         self.client = httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=15.0, read=90.0, write=15.0, pool=30.0),
+            timeout=httpx.Timeout(connect=12.0, read=60.0, write=10.0, pool=15.0),
             http2=use_http2,
             follow_redirects=True,
         )
@@ -217,10 +217,19 @@ class GeminiProvider(BaseProvider):
             status_code_str = ""
 
         if status == 429 or "RESOURCE_EXHAUSTED" in status_code_str or "quota" in msg.lower():
+            retry_s = 5.0
+            try:
+                for detail in err_obj.get("details", []):
+                    if isinstance(detail, dict) and "retryDelay" in detail:
+                        raw_delay = str(detail["retryDelay"]).rstrip("s")
+                        retry_s = max(1.0, float(raw_delay))
+                        break
+            except Exception:
+                retry_s = 5.0
             raise RateLimitException(
                 f"Google Gemini rate limit: {msg}",
                 provider="gemini",
-                retry_after=60.0,
+                retry_after=retry_s,
             )
         elif status in (401, 403) or "API_KEY_INVALID" in status_code_str:
             raise AuthException(
@@ -307,6 +316,18 @@ class GeminiProvider(BaseProvider):
 
         raw_content = "\n".join(text_parts) if text_parts else None
         clean_content = _strip_thinking_preamble(raw_content) if raw_content else None
+
+        # Guard: if thinking preamble stripping left us with nothing AND there
+        # are no tool calls, this model produced no usable output. Raise so
+        # the router falls through to the next candidate.
+        if clean_content is None and not tool_calls:
+            finish = cand.get("finishReason", "UNKNOWN")
+            raise ProviderException(
+                f"Gemini model '{model}' returned empty output (finishReason={finish!r}). "
+                "All response parts were thinking-only or empty.",
+                status_code=500,
+                provider=self.provider_id,
+            )
 
         return UnifiedChatResult(
             content=clean_content,
@@ -401,3 +422,35 @@ class GeminiProvider(BaseProvider):
                 if finish_reason == "MAX_TOKENS":
                     sr = "length"
                 yield {"stop_reason": sr}
+
+    async def list_models(self, api_key: str) -> List[Dict[str, Any]]:
+        """Query live models from Google Gemini API."""
+        url = f"{self.base_url}/models?key={api_key}"
+        try:
+            resp = await self.client.get(url, timeout=10.0)
+            if resp.status_code != 200:
+                logger.debug("Gemini GET /models returned HTTP %d", resp.status_code)
+                return []
+            data = resp.json()
+            raw_models = data.get("models") or []
+            discovered = []
+            for m in raw_models:
+                m_name = m.get("name", "")
+                m_id = m_name.replace("models/", "")
+                methods = m.get("supportedGenerationMethods", [])
+                if "generateContent" in methods:
+                    ctx = m.get("inputTokenLimit") or 128000
+                    discovered.append({
+                        "id": m_id,
+                        "name": m.get("displayName") or m_id,
+                        "context_window": ctx,
+                        "supports_tools": True,
+                        "supports_vision": True,
+                        "supports_thinking": "thinking" in m_id.lower() or "flash" in m_id.lower(),
+                        "is_dynamic": True,
+                    })
+            logger.info("Gemini discovered %d live models from /models", len(discovered))
+            return discovered
+        except Exception as e:
+            logger.debug("Failed to list Gemini models: %s", e)
+            return []

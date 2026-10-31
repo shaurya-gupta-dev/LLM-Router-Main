@@ -19,6 +19,10 @@ class KeyState:
         self.last_used: float = 0.0
 
     @property
+    def key_masked(self) -> str:
+        return f"...{self.key[-6:]}" if len(self.key) >= 6 else self.key
+
+    @property
     def is_available(self) -> bool:
         return time.time() >= self.cooldown_until
 
@@ -31,8 +35,8 @@ class KeyState:
         self.consecutive_errors += 1
         self.total_failures += 1
         logger.warning(
-            "Key ...%s in cooldown for %.1fs (reason: %s). Consecutive errors: %d",
-            self.key[-6:] if len(self.key) >= 6 else self.key,
+            "Key %s in cooldown for %.1fs (reason: %s). Consecutive errors: %d",
+            self.key_masked,
             duration_seconds,
             reason,
             self.consecutive_errors,
@@ -60,26 +64,31 @@ class ProviderKeyPool:
 
     def get_next_key(self) -> Optional[KeyState]:
         """Round-robin select the next available key not in cooldown."""
+        return self.get_next_key_excluding(set())
+
+    def get_next_key_excluding(self, excluded_keys: set[str]) -> Optional[KeyState]:
+        """Round-robin select the next available key not in cooldown and not in excluded_keys."""
         if not self.keys:
             return None
 
         now = time.time()
-        # Scan from current index
+        # Scan from current index across all keys
         for _ in range(len(self.keys)):
             k = self.keys[self._index % len(self.keys)]
             self._index = (self._index + 1) % len(self.keys)
-            if k.is_available:
+            if k.key not in excluded_keys and k.is_available:
                 return k
 
-        # If all keys are in cooldown, find the key that will become available soonest
-        soonest = min(self.keys, key=lambda k: k.cooldown_until)
-        wait_time = max(0.0, soonest.cooldown_until - now)
-        logger.warning(
-            "Provider '%s': All %d keys in cooldown. Soonest available in %.1fs.",
-            self.provider_id,
-            len(self.keys),
-            wait_time,
-        )
+        # If no key was found and this wasn't just filtering excluded keys, log cooldown wait
+        if not excluded_keys:
+            soonest = min(self.keys, key=lambda k: k.cooldown_until)
+            wait_time = max(0.0, soonest.cooldown_until - now)
+            logger.warning(
+                "Provider '%s': All %d keys in cooldown. Soonest available in %.1fs.",
+                self.provider_id,
+                len(self.keys),
+                wait_time,
+            )
         return None
 
     def update_keys(self, new_keys: List[str]):
@@ -92,6 +101,10 @@ class ProviderKeyPool:
             else:
                 updated.append(KeyState(raw))
         self.keys = updated
+        if self.keys:
+            self._index = self._index % len(self.keys)
+        else:
+            self._index = 0
 
 
 class KeyPoolManager:
@@ -108,6 +121,21 @@ class KeyPoolManager:
         if not pool:
             return None
         return pool.get_next_key()
+
+    def get_key_excluding(self, provider_id: str, excluded_keys: set[str]) -> Optional[KeyState]:
+        """Fetch next available key not in cooldown and not in excluded_keys."""
+        pool = self.pools.get(provider_id)
+        if not pool:
+            return None
+        return pool.get_next_key_excluding(excluded_keys)
+
+    def get_total_keys(self, provider_id: str) -> int:
+        pool = self.pools.get(provider_id)
+        return pool.total_keys if pool else 0
+
+    def get_available_keys_count(self, provider_id: str) -> int:
+        pool = self.pools.get(provider_id)
+        return pool.available_keys_count if pool else 0
 
     def get_pool(self, provider_id: str) -> Optional[ProviderKeyPool]:
         return self.pools.get(provider_id)
